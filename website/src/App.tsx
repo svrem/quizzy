@@ -115,7 +115,7 @@ function App() {
               key={index}
               // style={{ gridRow: startIndex + index }}
               className={cn(
-                'btn btn-primary answer-button rounded-3xl bg-answer-button-inactive px-20 py-10 text-3xl font-bold transition-all hover:bg-answer-button-hover',
+                'btn btn-primary answer-button relative rounded-3xl bg-answer-button-inactive px-20 py-10 text-[2dvh] font-bold transition-all hover:bg-answer-button-hover',
                 selectedAnswerIndex === index ? 'selected' : '',
                 correctAnswerIndex !== null &&
                   (correctAnswerIndex === index ? 'correct' : 'incorrect'),
@@ -123,10 +123,14 @@ function App() {
               onClick={() => {
                 setSelectedAnswerIndex(index);
               }}
-              dangerouslySetInnerHTML={{
-                __html: ALPHABET[index] + ') ' + answer,
-              }}
-            ></button>
+            >
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: ALPHABET[index] + ') ' + answer,
+                }}
+                className='absolute bottom-0 left-0 right-0 top-0 m-auto h-fit w-fit font-bold'
+              ></p>
+            </button>
           );
         })}
       </div>

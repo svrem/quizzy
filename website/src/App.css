@@ -2,6 +2,8 @@
   box-shadow:
     0 8px 0px 0px var(--answer-button-inactive-shadow),
     inset 0px 1px 0px 2px rgba(255, 255, 255, 0.1);
+
+  font-size: calc(min(2dvh, 5dvw));
 }
 
 .answer-button:hover {
@@ -14,7 +16,7 @@
 .answer-button.selected {
   box-shadow:
     0 8px 0px var(--answer-button-active-shadow),
-    inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);
+    inset 0px 1px 0 2px rgba(255, 255, 255, 0.1);
   background-color: var(--answer-button-active);
 }
 
@@ -22,20 +24,20 @@
   transform: translateY(8px);
   box-shadow:
     0 0px 0px 0px var(--answer-button-inactive-shadow),
-    inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);
+    inset 0px 1px 0 2px rgba(255, 255, 255, 0.1);
 }
 
 .answer-button.correct {
   background-color: var(--answer-correct);
   box-shadow:
     0 8px 0px 0px var(--answer-correct-shadow),
-    inset 0px 1px 0 0px rgba(255, 255, 255, 0.5);
+    inset 0px 1px 0 2px rgba(255, 255, 255, 0.5);
 }
 .answer-button.incorrect {
   background-color: var(--answer-incorrect);
   box-shadow:
     0 8px 0px 0px var(--answer-incorrect-shadow),
-    inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);
+    inset 0px 1px 0 2px rgba(255, 255, 255, 0.1);
 
   color: rgba(255, 255, 255, 0.8);
 }
