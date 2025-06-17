@@ -1,0 +1,26 @@
+.answer-button {
+  box-shadow:
+    0 8px 0px 0px var(--answer-button-inactive-shadow),
+    inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);
+}
+
+.answer-button:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 0px 0px var(--answer-button-hover-shadow),
+    inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);
+}
+
+.answer-button.selected {
+  box-shadow:
+    0 8px 0px var(--answer-button-active-shadow),
+    inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);
+  background-color: var(--answer-button-active);
+}
+
+.answer-button:active {
+  transform: translateY(8px);
+  box-shadow:
+    0 0px 0px 0px var(--answer-button-inactive-shadow),
+    inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);
+}
