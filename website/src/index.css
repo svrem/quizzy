@@ -38,4 +38,9 @@ code {
   --answer-button-hover-shadow: hsl(249.78, 61.33%, 29.41%);
   --answer-button-active: hsl(218.59, 87.67%, 55.49%);
   --answer-button-active-shadow: hsl(218.59, 87.67%, 45.49%);
+
+  --answer-correct: hsl(140, 70%, 45%);
+  --answer-correct-shadow: hsl(140, 70%, 35%);
+  --answer-incorrect: hsl(345, 75%, 40%);
+  --answer-incorrect-shadow: hsl(345, 75%, 30%);
 }

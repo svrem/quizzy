@@ -12,11 +12,11 @@ type Question struct {
 }
 
 type QuestionData struct {
-	Question string   `json:"question"`
-	Answers  []string `json:"answers"`
-	EndTime  int64    `json:"end_time"`
+	Question string `json:"question"`
+	EndTime  int64  `json:"end_time"`
 }
 
 type AnswerPhaseData struct {
-	AnswerShownAt int64 `json:"answer_shown_at"`
+	AnswerShownAt int64    `json:"answer_shown_at"`
+	Answers       []string `json:"answers"`
 }

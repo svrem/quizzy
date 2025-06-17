@@ -6,6 +6,7 @@ package websocket
 
 import (
 	"encoding/json"
+	"time"
 
 	"github.com/svrem/qizzy/internal/game"
 )
@@ -21,6 +22,43 @@ type Hub struct {
 
 	// Unregister requests from clients.
 	unregister chan *Client
+}
+
+func welcomeUser(client *Client, game *game.Game) {
+	currentTime := time.Now().UnixMilli()
+
+	questionMessage := game.GenerateQuestionMessage()
+	questionMessageStr, err := json.Marshal(questionMessage)
+	if err != nil {
+		println("Error marshalling question message:", err)
+		return
+	}
+	sendMessageToClient(client, questionMessageStr)
+
+	if currentTime < game.QuestionPreviewDeadline {
+		return
+	}
+
+	answerPhaseMessage := game.GenerateAnswerPhaseMessage()
+	answerPhaseMessageStr, err := json.Marshal(answerPhaseMessage)
+	if err != nil {
+		println("Error marshalling answer phase message:", err)
+		return
+	}
+	sendMessageToClient(client, answerPhaseMessageStr)
+
+	if currentTime < game.QuestionSubmissionDeadline {
+		return
+	}
+
+	showAnswerMessage := game.GenerateShowAnswerMessage()
+	showAnswerMessageStr, err := json.Marshal(showAnswerMessage)
+	if err != nil {
+		println("Error marshalling show answer message:", err)
+		return
+	}
+	sendMessageToClient(client, showAnswerMessageStr)
+
 }
 
 func sendMessageToClient(client *Client, message []byte) {
@@ -49,15 +87,17 @@ func (h *Hub) Run() {
 		case client := <-h.register:
 			h.clients[client] = true
 
-			welcomeMessage := curr_game.GenerateWelcomeMessage()
-			welcomeMessageStr, err := json.Marshal(welcomeMessage)
+			welcomeUser(client, curr_game)
 
-			if err != nil {
-				println("Error marshalling welcome message:", err)
-				continue
-			}
+			// welcomeMessage := curr_game.GenerateWelcomeMessage()
+			// welcomeMessageStr, err := json.Marshal(welcomeMessage)
 
-			sendMessageToClient(client, welcomeMessageStr)
+			// if err != nil {
+			// 	println("Error marshalling welcome message:", err)
+			// 	continue
+			// }
+
+			// sendMessageToClient(client, welcomeMessageStr)
 
 		case client := <-h.unregister:
 			if _, ok := h.clients[client]; ok {

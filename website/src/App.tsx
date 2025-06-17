@@ -5,17 +5,17 @@ import { cn } from './utils.ts';
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-interface QuestionData {
-  question: string;
-  answers: string[];
-  end_time: number;
-}
-
 function App() {
-  const [question, setQuestion] = useState<QuestionData | null>(null);
+  const [question, setQuestion] = useState<string>('');
+  const [answers, setAnswers] = useState<string[]>([]);
+
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(
     null,
   );
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number | null>(
+    null,
+  );
+
   const [timerEndTime, setTimerEndTime] = useState<number | null>(null);
   const [timerCountdown, setTimerCountdown] = useState<number | null>(null);
 
@@ -27,8 +27,6 @@ function App() {
       const timeLeft = Math.max(0, timerEndTime - currentTime);
 
       setTimerCountdown(Math.floor(timeLeft / 1000));
-
-      console.log(timerEndTime, currentTime);
 
       if (timeLeft <= 0) {
         clearInterval(interval);
@@ -55,12 +53,21 @@ function App() {
 
       switch (data.type) {
         case 'question': {
-          setQuestion(data.data);
+          setQuestion(data.data.question);
+          setAnswers([]);
           setSelectedAnswerIndex(null);
+          setCorrectAnswerIndex(null);
           break;
         }
         case 'start-answer-phase': {
+          setAnswers(data.data.answers);
+
           setTimerEndTime(data.data.answer_shown_at);
+          break;
+        }
+        case 'show-answer': {
+          setCorrectAnswerIndex(data.data);
+          break;
         }
       }
     };
@@ -79,11 +86,13 @@ function App() {
   return (
     <div className='relative grid h-full w-full grid-rows-2'>
       <div className='flex flex-col'>
-        <div className='grid grid-cols-3'>
-          <h1 className='col-start-2 text-center text-5xl font-bold'>Quizzy</h1>
+        <div className='grid grid-cols-3 items-center'>
+          <h1 className='col-start-2 h-fit text-center text-5xl font-bold'>
+            Quizzy
+          </h1>
 
           <div className='col-start-3 grid place-items-center justify-self-end'>
-            <div className='grid aspect-square h-full place-items-center rounded-full bg-black/30 font-bold'>
+            <div className='grid aspect-square h-32 place-items-center rounded-full bg-yellow-500 text-5xl font-bold text-black'>
               {String(timerCountdown).padStart(2, '0')}
             </div>
           </div>
@@ -92,13 +101,13 @@ function App() {
         <div className='row-span-1 grid flex-grow place-items-center'>
           <h1
             className='text-balance text-center text-3xl font-bold'
-            dangerouslySetInnerHTML={{ __html: question?.question || '' }}
+            dangerouslySetInnerHTML={{ __html: question }}
           ></h1>
         </div>
       </div>
 
       <div className='bottom-8 grid w-full grid-rows-4 gap-5'>
-        {question?.answers.map((answer, index) => {
+        {answers.map((answer, index) => {
           // const startIndex = 5 - question.answers.length;
 
           return (
@@ -106,8 +115,10 @@ function App() {
               key={index}
               // style={{ gridRow: startIndex + index }}
               className={cn(
-                'btn btn-primary answer-button bg-answer-button-inactive hover:bg-answer-button-hover rounded-xl px-20 py-10 text-3xl font-bold transition-all',
+                'btn btn-primary answer-button rounded-3xl bg-answer-button-inactive px-20 py-10 text-3xl font-bold transition-all hover:bg-answer-button-hover',
                 selectedAnswerIndex === index ? 'selected' : '',
+                correctAnswerIndex !== null &&
+                  (correctAnswerIndex === index ? 'correct' : 'incorrect'),
               )}
               onClick={() => {
                 setSelectedAnswerIndex(index);

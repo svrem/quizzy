@@ -13,9 +13,10 @@ const (
 type Game struct {
 	Listen chan GameEvent
 
-	// The current question
-	current_question  Question
-	question_end_time int64
+	currentQuestion Question
+
+	QuestionPreviewDeadline    int64
+	QuestionSubmissionDeadline int64
 }
 
 func (g *Game) Start() {
@@ -29,42 +30,72 @@ func (g *Game) Start() {
 			return
 		}
 
-		// Start the game
-		g.Listen <- GameEvent{Type: "question", Data: QuestionData{
-			Question: question.Question,
-			Answers:  question.Answers,
-			EndTime:  time.Now().Add(QuestionDuration * time.Second).UnixMilli(),
-		}}
+		// Set up the current question and end time
+		g.currentQuestion = question
+		g.QuestionPreviewDeadline = time.Now().Add(QuestionDuration * time.Second).UnixMilli()
 
-		g.current_question = question
-		g.question_end_time = time.Now().Add(QuestionDuration * time.Second).UnixMilli()
+		// Start the game with question
+		g.Listen <- g.GenerateQuestionMessage()
 
 		time.Sleep(QuestionDuration * time.Second)
 
-		g.Listen <- GameEvent{Type: "start-answer-phase", Data: AnswerPhaseData{
-			AnswerShownAt: time.Now().Add(AnswerDuration * time.Second).UnixMilli(),
-		}}
+		g.QuestionSubmissionDeadline = time.Now().Add(AnswerDuration * time.Second).UnixMilli()
+		// Start answer phase
+		g.Listen <- g.GenerateAnswerPhaseMessage()
 
 		time.Sleep(AnswerDuration * time.Second)
 
-		g.Listen <- GameEvent{Type: "show-answer", Data: question.Correct}
+		// Show correct answer
+		g.Listen <- g.GenerateShowAnswerMessage()
 
 		time.Sleep(ShowAnswerDuration * time.Second)
 	}
 }
 
-func (g *Game) GenerateWelcomeMessage() GameEvent {
-	question := g.current_question
+func (g *Game) GenerateQuestionMessage() GameEvent {
+	question := g.currentQuestion
 
 	return GameEvent{
 		Type: "question",
 		Data: QuestionData{
 			Question: question.Question,
-			Answers:  question.Answers,
-			EndTime:  g.question_end_time,
+			EndTime:  g.QuestionPreviewDeadline,
 		},
 	}
 }
+
+func (g *Game) GenerateAnswerPhaseMessage() GameEvent {
+	question := g.currentQuestion
+
+	return GameEvent{
+		Type: "start-answer-phase",
+		Data: AnswerPhaseData{
+			AnswerShownAt: g.QuestionSubmissionDeadline,
+			Answers:       question.Answers,
+		},
+	}
+}
+
+func (g *Game) GenerateShowAnswerMessage() GameEvent {
+	question := g.currentQuestion
+
+	return GameEvent{
+		Type: "show-answer",
+		Data: question.Correct,
+	}
+}
+
+// func (g *Game) GenerateWelcomeMessage() GameEvent {
+// 	question := g.current_question
+
+// 	return GameEvent{
+// 		Type: "question",
+// 		Data: QuestionData{
+// 			Question: question.Question,
+// 			EndTime:  g.question_end_time,
+// 		},
+// 	}
+// }
 
 func NewGame() *Game {
 	return &Game{
