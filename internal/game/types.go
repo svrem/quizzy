@@ -6,14 +6,18 @@ type GameEvent struct {
 }
 
 type Question struct {
-	Question string   `json:"question"`
-	Answers  []string `json:"answers"`
-	Correct  int      `json:"correct"`
+	Question   string   `json:"question"`
+	Answers    []string `json:"answers"`
+	Correct    int      `json:"correct"`
+	Difficulty string   `json:"difficulty"`
+	Category   string   `json:"category"`
 }
 
 type QuestionData struct {
-	Question string `json:"question"`
-	EndTime  int64  `json:"end_time"`
+	Question   string `json:"question"`
+	Difficulty string `json:"difficulty"`
+	Category   string `json:"category"`
+	EndTime    int64  `json:"end_time"`
 }
 
 type AnswerPhaseData struct {

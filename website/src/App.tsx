@@ -1,12 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import React from 'react';
 import { cn } from './utils.ts';
 
+import { buildStyles, CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import { fireConfetti } from './utils/confetti.ts';
+import { useGameSocket } from './utils/useGameSocket.ts';
+
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 function App() {
+  const gameSocket = useGameSocket();
+
   const [question, setQuestion] = useState<string>('');
+  const [difficulty, setDifficulty] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
   const [answers, setAnswers] = useState<string[]>([]);
 
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState<number | null>(
@@ -19,8 +28,12 @@ function App() {
   const [timerEndTime, setTimerEndTime] = useState<number | null>(null);
   const [timerCountdown, setTimerCountdown] = useState<number | null>(null);
 
+  const selectedOptionRef = useRef<HTMLButtonElement | null>(null);
+
   useEffect(() => {
     if (!timerEndTime) return;
+
+    setTimerCountdown(Math.floor((timerEndTime - new Date().getTime()) / 1000));
 
     const interval = setInterval(() => {
       const currentTime = new Date().getTime();
@@ -29,10 +42,8 @@ function App() {
       setTimerCountdown(Math.floor(timeLeft / 1000));
 
       if (timeLeft <= 0) {
-        clearInterval(interval);
         setTimerCountdown(0);
-        // Optionally, you can reset the timerEndTime or handle the end of the timer here
-        setTimerEndTime(null);
+        clearInterval(interval);
       }
     }, 500);
 
@@ -42,11 +53,10 @@ function App() {
   }, [timerEndTime]);
 
   useEffect(() => {
-    const newSocket = new WebSocket('ws://localhost:8080/ws');
-    newSocket.onopen = () => {
+    gameSocket.onopen = () => {
       console.log('WebSocket connection established');
     };
-    newSocket.onmessage = (event) => {
+    gameSocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
       console.log(data);
@@ -54,8 +64,11 @@ function App() {
       switch (data.type) {
         case 'question': {
           setQuestion(data.data.question);
+          setDifficulty(data.data.difficulty);
+          setCategory(data.data.category);
           setAnswers([]);
           setSelectedAnswerIndex(null);
+          setTimerEndTime(null);
           setCorrectAnswerIndex(null);
           break;
         }
@@ -67,46 +80,119 @@ function App() {
         }
         case 'show-answer': {
           setCorrectAnswerIndex(data.data);
+
+          if (selectedAnswerIndex !== data.data) {
+            setSelectedAnswerIndex(null);
+
+            return;
+          }
+          setSelectedAnswerIndex(null);
+
+          const source = selectedOptionRef.current?.getBoundingClientRect();
+
+          if (!source) return;
+
+          fireConfetti({
+            y: source.top / window.innerHeight,
+          });
+
           break;
         }
       }
     };
-    newSocket.onclose = () => {
+    gameSocket.onclose = () => {
       console.log('WebSocket connection closed');
     };
-    newSocket.onerror = (error) => {
+    gameSocket.onerror = (error) => {
       console.error('WebSocket error:', error);
     };
 
     return () => {
-      newSocket.close();
+      gameSocket.onopen = null;
+      gameSocket.onmessage = null;
+      gameSocket.onclose = null;
+      gameSocket.onerror = null;
     };
-  }, []);
+  }, [gameSocket, selectedAnswerIndex]);
 
   return (
     <div className='relative grid h-full w-full grid-rows-2'>
       <div className='flex flex-col'>
-        <div className='grid grid-cols-3 items-center'>
-          <h1 className='col-start-2 h-fit text-center text-5xl font-bold'>
+        <div className='grid grid-cols-3 items-center p-5 md:p-0'>
+          <h1 className='h-fit text-2xl font-bold md:col-start-2 md:text-center md:text-5xl'>
             Quizzy
           </h1>
 
-          <div className='col-start-3 grid place-items-center justify-self-end'>
-            <div className='grid aspect-square h-32 place-items-center rounded-full bg-yellow-500 text-5xl font-bold text-black'>
-              {String(timerCountdown).padStart(2, '0')}
-            </div>
-          </div>
+          <CircularProgressbar
+            className='col-start-3 h-12 !w-12 justify-self-end font-bold md:h-24 md:!w-24'
+            value={timerCountdown ?? 15}
+            text={
+              timerCountdown ? String(timerCountdown).padStart(2, '0') : '00'
+            }
+            maxValue={15}
+            backgroundPadding={6}
+            styles={buildStyles({
+              trailColor: 'hsla(0, 0%, 0%, 0.4)',
+              textColor: '#fff',
+              pathColor: 'yellow',
+              strokeLinecap: 'round',
+              pathTransitionDuration: 0.3,
+              pathTransition: 'ease 0.3s',
+              textSize: '1.8rem',
+            })}
+          />
         </div>
 
-        <div className='row-span-1 grid flex-grow place-items-center'>
-          <h1
-            className='text-balance text-center text-3xl font-bold'
+        <div className='row-span-1 flex flex-grow flex-col items-center justify-center'>
+          <p
+            className='text-center text-xl font-bold md:text-3xl'
             dangerouslySetInnerHTML={{ __html: question }}
-          ></h1>
+          ></p>
+
+          <div className='flex items-center justify-center gap-2 text-sm font-semibold text-gray-400 md:gap-3 md:text-lg'>
+            <p
+              dangerouslySetInnerHTML={{
+                __html: category ? category.split(':')[0] : '',
+              }}
+              className='capitalize'
+            ></p>
+            <div className='h-4 w-px bg-gray-500 md:h-5'></div>
+            <p
+              className={cn(
+                'capitalize',
+                difficulty === 'easy' ? 'text-green-500' : '',
+                difficulty === 'medium' ? 'text-yellow-500' : '',
+                difficulty === 'hard' ? 'text-red-500' : '',
+              )}
+            >
+              {difficulty}
+            </p>
+          </div>
+
+          {/* <div
+            className='grid items-center justify-center gap-1 text-sm font-semibold text-gray-400 md:gap-2 md:text-lg'
+            style={{ gridTemplateColumns: '1fr auto 1fr' }}
+          >
+            <p
+              className='text-right capitalize'
+              dangerouslySetInnerHTML={{ __html: category.split(':')[0] }}
+            />
+            <div className='h-4 w-px bg-gray-500 md:h-5'></div>
+            <p
+              className={cn(
+                'text-left capitalize',
+                difficulty === 'easy' ? 'text-green-500' : '',
+                difficulty === 'medium' ? 'text-yellow-500' : '',
+                difficulty === 'hard' ? 'text-red-500' : '',
+              )}
+            >
+              {difficulty}
+            </p>
+          </div> */}
         </div>
       </div>
 
-      <div className='bottom-8 grid w-full grid-rows-4 gap-5'>
+      <div className='bottom-8 grid w-full grid-rows-4 gap-3 md:gap-5'>
         {answers.map((answer, index) => {
           // const startIndex = 5 - question.answers.length;
 
@@ -115,7 +201,7 @@ function App() {
               key={index}
               // style={{ gridRow: startIndex + index }}
               className={cn(
-                'btn btn-primary answer-button relative rounded-3xl bg-answer-button-inactive px-20 py-10 text-[2dvh] font-bold transition-all hover:bg-answer-button-hover',
+                'btn btn-primary answer-button relative select-none rounded-2xl bg-answer-button-inactive px-20 text-[2dvh] font-bold transition-all hover:bg-answer-button-hover md:rounded-3xl md:py-10',
                 selectedAnswerIndex === index ? 'selected' : '',
                 correctAnswerIndex !== null &&
                   (correctAnswerIndex === index ? 'correct' : 'incorrect'),
@@ -123,6 +209,7 @@ function App() {
               onClick={() => {
                 setSelectedAnswerIndex(index);
               }}
+              ref={selectedAnswerIndex === index ? selectedOptionRef : null}
             >
               <p
                 dangerouslySetInnerHTML={{

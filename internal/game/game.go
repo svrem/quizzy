@@ -20,10 +20,10 @@ type Game struct {
 }
 
 func (g *Game) Start() {
-	question_session := NewQuestionSession()
+	questionSession := NewQuestionSession()
 
 	for {
-		question, err := question_session.GetQuestion()
+		question, err := questionSession.GetQuestion()
 
 		if err != nil {
 			println("Error fetching question:", err.Error())
@@ -58,8 +58,10 @@ func (g *Game) GenerateQuestionMessage() GameEvent {
 	return GameEvent{
 		Type: "question",
 		Data: QuestionData{
-			Question: question.Question,
-			EndTime:  g.QuestionPreviewDeadline,
+			Question:   question.Question,
+			EndTime:    g.QuestionPreviewDeadline,
+			Difficulty: question.Difficulty,
+			Category:   question.Category,
 		},
 	}
 }

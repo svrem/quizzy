@@ -86,12 +86,18 @@ func (qs *QuestionSession) FetchQuestions() error {
 		correctIndex := rand.Intn(len(answers))
 		answers[correctIndex], answers[len(answers)-1] = answers[len(answers)-1], answers[correctIndex]
 
-		question := q.(map[string]interface{})["question"].(string)
+		questionObject := q.(map[string]interface{})
+
+		question := questionObject["question"].(string)
+		difficulty := questionObject["difficulty"].(string)
+		category := questionObject["category"].(string)
 
 		new_question := Question{
-			Question: question,
-			Answers:  answers,
-			Correct:  correctIndex,
+			Question:   question,
+			Answers:    answers,
+			Correct:    correctIndex,
+			Difficulty: difficulty,
+			Category:   category,
 		}
 		qs.questions = append(qs.questions, new_question)
 
