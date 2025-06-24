@@ -2,7 +2,7 @@ import confetti from 'canvas-confetti';
 
 const count = 200;
 
-function fire(particleRatio, opts) {
+function fire(particleRatio: number, opts: confetti.Options) {
   confetti({
     ...opts,
     particleCount: Math.floor(count * particleRatio),

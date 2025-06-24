@@ -87,18 +87,6 @@ func (g *Game) GenerateShowAnswerMessage() GameEvent {
 	}
 }
 
-// func (g *Game) GenerateWelcomeMessage() GameEvent {
-// 	question := g.current_question
-
-// 	return GameEvent{
-// 		Type: "question",
-// 		Data: QuestionData{
-// 			Question: question.Question,
-// 			EndTime:  g.question_end_time,
-// 		},
-// 	}
-// }
-
 func NewGame() *Game {
 	return &Game{
 		Listen: make(chan GameEvent),

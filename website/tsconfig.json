@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES6", // Specifies the JavaScript version to compile to
+    "lib": ["DOM", "DOM.Iterable", "ESNext"], // Includes libraries for DOM and modern JavaScript
+    "jsx": "react-jsx", // Enables JSX syntax for React
+    "module": "ESNext", // Specifies the module system
+    "moduleResolution": "Node", // Resolves modules in Node.js style
+    "strict": true, // Enables all strict type-checking options
+    "esModuleInterop": true, // Allows default imports from CommonJS modules
+    "skipLibCheck": true, // Skips type checking of declaration files
+    "forceConsistentCasingInFileNames": true, // Enforces consistent casing in file names
+    "resolveJsonModule": true, // Allows importing JSON files
+    "isolatedModules": true, // Ensures each file can be safely transpiled
+    "noEmit": true, // Prevents emitting compiled files
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"] // Maps the '@' alias to the 'src' directory
+    }
+  },
+  "include": ["src"], // Specifies the files or directories to include
+  "exclude": ["node_modules"] // Excludes unnecessary files or directories
+}
