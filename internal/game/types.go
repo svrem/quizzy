@@ -1,8 +1,17 @@
 package game
 
+type GameEventType string
+
+const (
+	QuestionEventType        GameEventType = "question"
+	AnswerPhaseEventType     GameEventType = "start-answer-phase"
+	ShowAnswerEventType      GameEventType = "show-answer"
+	UpdateUserStatsEventType GameEventType = "update-user-stats"
+)
+
 type GameEvent struct {
-	Type string      `json:"type"`
-	Data interface{} `json:"data"`
+	Type GameEventType `json:"type"`
+	Data interface{}   `json:"data"`
 }
 
 type Question struct {

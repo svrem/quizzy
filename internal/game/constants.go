@@ -1,0 +1,4 @@
+package game
+
+const BASE_SCORE_INCREMENT = 10
+const SCORE_EXPONENT_INCREMENT = 0.1

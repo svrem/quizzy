@@ -23,8 +23,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  background-color: #1b0e40;
-  color: #f8f8f2;
+  background-color: hsl(255.6, 64%, 15%);
+  color: var(--base-text-color);
 }
 
 @media (width < 600px) {
@@ -39,6 +39,9 @@ code {
 }
 
 :root {
+  --theme-accent-color: hsl(45, 100%, 50%);
+  --base-text-color: hsl(60, 30%, 96.08%);
+
   --answer-button-inactive: hsl(249.78, 61.33%, 29.41%);
   --answer-button-inactive-shadow: hsl(249.78, 61.33%, 19.41%);
   --answer-button-hover: hsl(249.78, 61.33%, 39.41%);

@@ -59,7 +59,7 @@ export default function AnswersDisplay({
   selectedOptionRef,
 }: AnswersDisplayProps) {
   return (
-    <div className='grid w-full grid-rows-4 gap-3 md:gap-5'>
+    <>
       {answers.map((answer, index) => (
         <Answer
           key={index}
@@ -71,6 +71,6 @@ export default function AnswersDisplay({
           selectedOptionRef={selectedOptionRef}
         />
       ))}
-    </div>
+    </>
   );
 }

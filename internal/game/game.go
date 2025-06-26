@@ -13,7 +13,7 @@ const (
 type Game struct {
 	Listen chan GameEvent
 
-	currentQuestion Question
+	CurrentQuestion Question
 
 	QuestionPreviewDeadline    int64
 	QuestionSubmissionDeadline int64
@@ -31,7 +31,7 @@ func (g *Game) Start() {
 		}
 
 		// Set up the current question and end time
-		g.currentQuestion = question
+		g.CurrentQuestion = question
 		g.QuestionPreviewDeadline = time.Now().Add(QuestionDuration * time.Second).UnixMilli()
 
 		// Start the game with question
@@ -53,10 +53,10 @@ func (g *Game) Start() {
 }
 
 func (g *Game) GenerateQuestionMessage() GameEvent {
-	question := g.currentQuestion
+	question := g.CurrentQuestion
 
 	return GameEvent{
-		Type: "question",
+		Type: QuestionEventType,
 		Data: QuestionData{
 			Question:   question.Question,
 			EndTime:    g.QuestionPreviewDeadline,
@@ -67,10 +67,10 @@ func (g *Game) GenerateQuestionMessage() GameEvent {
 }
 
 func (g *Game) GenerateAnswerPhaseMessage() GameEvent {
-	question := g.currentQuestion
+	question := g.CurrentQuestion
 
 	return GameEvent{
-		Type: "start-answer-phase",
+		Type: AnswerPhaseEventType,
 		Data: AnswerPhaseData{
 			AnswerShownAt: g.QuestionSubmissionDeadline,
 			Answers:       question.Answers,
@@ -79,11 +79,24 @@ func (g *Game) GenerateAnswerPhaseMessage() GameEvent {
 }
 
 func (g *Game) GenerateShowAnswerMessage() GameEvent {
-	question := g.currentQuestion
+	question := g.CurrentQuestion
 
 	return GameEvent{
-		Type: "show-answer",
+		Type: ShowAnswerEventType,
 		Data: question.Correct,
+	}
+}
+
+func GenerateUpdateUserStatsMessage(
+	newStreak int,
+	newScore int,
+) GameEvent {
+	return GameEvent{
+		Type: UpdateUserStatsEventType,
+		Data: map[string]interface{}{
+			"streak": newStreak,
+			"score":  newScore,
+		},
 	}
 }
 

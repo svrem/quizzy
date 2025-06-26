@@ -44,6 +44,9 @@ importers:
       react-scripts:
         specifier: 5.0.1
         version: 5.0.1(@babel/plugin-syntax-flow@7.27.1(@babel/core@7.27.4))(@babel/plugin-transform-react-jsx@7.27.1(@babel/core@7.27.4))(@types/babel__core@7.20.5)(eslint@8.57.1)(react@19.1.0)(ts-node@10.9.2(@types/node@24.0.3)(typescript@5.8.3))(type-fest@0.21.3)(typescript@5.8.3)
+      react-slot-counter:
+        specifier: ^3.3.1
+        version: 3.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
@@ -4664,6 +4667,13 @@ packages:
     peerDependenciesMeta:
       typescript:
         optional: true
+
+  react-slot-counter@3.3.1:
+    resolution: {integrity: sha512-+blRPrKBLDC9GyyGENfyNQYOW3XxkaWmUL1fTtut3slZQS2+yMaAJdvwAyWUYB1eD+6Pd1aZzXFmBxmlSkvhfg==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   react@19.1.0:
     resolution: {integrity: sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==}
@@ -11224,6 +11234,11 @@ snapshots:
       - webpack-cli
       - webpack-hot-middleware
       - webpack-plugin-serve
+
+  react-slot-counter@3.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   react@19.1.0: {}
 

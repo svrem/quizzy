@@ -1,9 +1,13 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGameSocket } from '@/hooks/useGameSocket';
 import { fireConfetti } from '@/utils/confetti';
+import { useUserStats } from '@/hooks/useUserStats';
 
 export function useGame() {
   const gameSocket = useGameSocket();
+  // const { finaliseQuestion, score, streak } = useUserStats();
+  const [streak, setStreak] = useState(0);
+  const [score, setScore] = useState(0);
 
   const [question, setQuestion] = useState<string | null>(null);
   const [difficulty, setDifficulty] = useState<string | null>(null);
@@ -19,6 +23,17 @@ export function useGame() {
 
   const selectedOptionRef = useRef<HTMLButtonElement | null>(null);
 
+  useEffect(() => {
+    if (selectedAnswerIndex === null) return;
+
+    gameSocket.send(
+      JSON.stringify({
+        type: 'select-answer',
+        answer: selectedAnswerIndex,
+      }),
+    );
+  }, [selectedAnswerIndex]);
+
   gameSocket.onopen = () => {
     gameSocket.send(
       JSON.stringify({
@@ -27,7 +42,7 @@ export function useGame() {
     );
   };
 
-  gameSocket.onmessage = (event: MessageEvent) => {
+  gameSocket.onmessage = async (event: MessageEvent) => {
     const data = JSON.parse(event.data);
 
     console.log(data);
@@ -49,21 +64,31 @@ export function useGame() {
         setTimerEndTime(data.data.answer_shown_at);
         break;
       }
+      case 'update-user-stats': {
+        setScore(data.data.score);
+        setStreak(data.data.streak);
+        break;
+      }
       case 'show-answer': {
         setCorrectAnswerIndex(data.data);
 
-        if (selectedAnswerIndex !== data.data) {
+        if (selectedAnswerIndex === null) {
           setSelectedAnswerIndex(null);
-
           return;
         }
+
+        if (selectedAnswerIndex !== data.data) {
+          setSelectedAnswerIndex(null);
+          return;
+        }
+
         setSelectedAnswerIndex(null);
 
         const source = selectedOptionRef.current?.getBoundingClientRect();
 
         if (!source) return;
 
-        fireConfetti({
+        await fireConfetti({
           y: source.top / window.innerHeight,
         });
 
@@ -74,7 +99,10 @@ export function useGame() {
 
   gameSocket.onclose = () => {
     console.log('WebSocket connection closed');
-    window.location.reload();
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
   gameSocket.onerror = (error: Event) => {
     console.error('WebSocket error:', error);
@@ -89,7 +117,8 @@ export function useGame() {
     correctAnswerIndex,
     timerEndTime,
     selectedOptionRef,
+    score,
+    streak,
     setSelectedAnswerIndex,
-    setCorrectAnswerIndex,
   };
 }

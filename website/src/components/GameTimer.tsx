@@ -40,8 +40,8 @@ export default function GameTimer({ timerEndTime }: GameTimerProps) {
       backgroundPadding={6}
       styles={buildStyles({
         trailColor: 'hsla(0, 0%, 0%, 0.4)',
-        textColor: '#fff',
-        pathColor: 'yellow',
+        textColor: 'var(--base-text-color)',
+        pathColor: 'var(--theme-accent-color)',
         strokeLinecap: 'round',
         pathTransitionDuration: 0.3,
         pathTransition: 'ease 0.3s',

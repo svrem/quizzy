@@ -6,6 +6,7 @@ package websocket
 
 import (
 	"encoding/json"
+	"math"
 	"time"
 
 	"github.com/svrem/qizzy/internal/game"
@@ -113,6 +114,14 @@ func (h *Hub) Run() {
 			switch messageType {
 			case "welcome":
 				welcomeUser(message.Client, currentGame)
+			case "select-answer":
+				answer, ok := msg["answer"].(float64)
+				if !ok {
+					println("Invalid answer format")
+					continue
+				}
+
+				message.Client.selectedAnswer = int(answer)
 			default:
 				println("Unknown message type:", messageType)
 			}
@@ -124,6 +133,41 @@ func (h *Hub) Run() {
 				continue
 			}
 
+			switch event.Type {
+			case game.AnswerPhaseEventType:
+				{
+					for client := range h.clients {
+						client.selectedAnswer = -1 // Reset selected answer for all clients
+					}
+				}
+			case game.ShowAnswerEventType:
+				{
+					for client := range h.clients {
+						if client.selectedAnswer == -1 {
+							continue
+						}
+
+						if client.selectedAnswer == currentGame.CurrentQuestion.Correct {
+							client.score += int(math.Round(math.Pow(game.BASE_SCORE_INCREMENT, 1+game.SCORE_EXPONENT_INCREMENT*float64(client.streak))))
+							client.streak++
+
+						} else {
+							client.streak = 0
+						}
+
+						msg := game.GenerateUpdateUserStatsMessage(client.streak, client.score)
+						msgStr, err := json.Marshal(msg)
+						if err != nil {
+							println("Error marshalling user stats message:", err)
+							continue
+						}
+
+						sendMessageToClient(client, msgStr)
+					}
+				}
+			}
+
+			// Broadcast the event to all connected clients
 			for client := range h.clients {
 				sendMessageToClient(client, eventStr)
 			}

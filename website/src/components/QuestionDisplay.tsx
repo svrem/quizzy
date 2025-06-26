@@ -12,9 +12,9 @@ export default function QuestionDisplay({
   category,
 }: QuestionDisplayProps) {
   return (
-    <div className='row-span-1 flex flex-grow flex-col items-center justify-center'>
+    <div className='flex flex-col items-center justify-center'>
       <p
-        className='select-none text-center text-xl font-bold md:text-3xl'
+        className='animate-fade-in select-none text-center text-xl font-bold opacity-0 md:text-3xl'
         dangerouslySetInnerHTML={{ __html: question || '' }}
       ></p>
 
@@ -23,12 +23,17 @@ export default function QuestionDisplay({
           dangerouslySetInnerHTML={{
             __html: category ? category.split(':')[0] : '',
           }}
-          className='capitalize'
+          className='animate-fade-in-slide capitalize opacity-0'
+          style={{ animationDelay: '0.4s' }}
         ></p>
-        <div className='h-4 w-px bg-gray-500 md:h-5'></div>
+        <div
+          className='animate-fade-in h-4 w-px bg-gray-500 opacity-0 md:h-5'
+          style={{ animationDelay: '0.8s' }}
+        />
         <p
+          style={{ animationDelay: '0.8s' }}
           className={cn(
-            'capitalize',
+            'animate-fade-in-slide capitalize opacity-0',
             difficulty === 'easy' ? 'text-green-500' : '',
             difficulty === 'medium' ? 'text-yellow-500' : '',
             difficulty === 'hard' ? 'text-red-500' : '',
