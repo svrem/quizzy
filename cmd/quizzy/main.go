@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/svrem/qizzy/internal/routes"
-	"github.com/svrem/qizzy/internal/websocket"
+	"github.com/svrem/quizzy/internal/routes"
+	"github.com/svrem/quizzy/internal/websocket"
 )
 
 func main() {

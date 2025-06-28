@@ -1,4 +1,4 @@
-module github.com/svrem/qizzy
+module github.com/svrem/quizzy
 
 go 1.24.0
 

@@ -9,7 +9,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/svrem/qizzy/internal/game"
+	"github.com/svrem/quizzy/internal/game"
 )
 
 func welcomeUser(client *Client, game *game.Game) {
