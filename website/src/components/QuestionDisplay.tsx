@@ -27,7 +27,7 @@ export default function QuestionDisplay({
           style={{ animationDelay: '0.4s' }}
         ></p>
         <div
-          className='animate-fade-in h-4 w-px bg-gray-500 opacity-0 md:h-5'
+          className='h-4 w-px animate-fade-in bg-gray-500 opacity-0 md:h-5'
           style={{ animationDelay: '0.8s' }}
         />
         <p

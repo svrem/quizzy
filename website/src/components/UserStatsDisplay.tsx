@@ -53,7 +53,7 @@ export default function UserStatsDisplay({
       </div>
 
       <div className='grid place-content-center p-1'>
-        <div className='bg-theme-accent-color aspect-square w-10 rounded-full p-2 md:w-16'>
+        <div className='aspect-square h-10 w-10 rounded-full bg-theme-accent-color p-2 md:h-16 md:w-16'>
           <UserIcon />
         </div>
       </div>

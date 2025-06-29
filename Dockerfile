@@ -18,8 +18,6 @@ WORKDIR /app
 FROM web AS web-build
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
-# DEBUG
-RUN ls -l /app/build
 
 FROM web
 COPY --from=web-build /app/build /app/build
