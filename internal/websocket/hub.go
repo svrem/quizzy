@@ -143,7 +143,8 @@ func (h *Hub) Run() {
 			case game.ShowAnswerEventType:
 				{
 					for client := range h.clients {
-						if client.selectedAnswer == -1 {
+						// if the streak is 0 and the client has not selected an answer, nothing will happen, so continue
+						if client.streak == 0 && client.selectedAnswer == -1 {
 							continue
 						}
 
