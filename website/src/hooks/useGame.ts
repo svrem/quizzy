@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
 import { useGameSocket } from '@/hooks/useGameSocket';
 import { fireConfetti } from '@/utils/confetti';
-import { useUserStats } from '@/hooks/useUserStats';
+import { useEffect, useRef, useState } from 'react';
 
 export function useGame() {
   const gameSocket = useGameSocket();
@@ -32,7 +31,7 @@ export function useGame() {
         answer: selectedAnswerIndex,
       }),
     );
-  }, [selectedAnswerIndex]);
+  }, [selectedAnswerIndex, gameSocket]);
 
   gameSocket.onopen = () => {
     gameSocket.send(
