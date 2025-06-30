@@ -10,8 +10,8 @@ import (
 
 func openQuestionsDB() (*sql.DB, error) {
 
-	if _, err := os.Stat("/path/to/whatever"); errors.Is(err, os.ErrNotExist) {
-		return nil, errors.New("questions database does not exist")
+	if _, err := os.Stat("data/questiondb.db"); errors.Is(err, os.ErrNotExist) {
+		return nil, errors.New("questions database does not exist at the specified path (data/questiondb.db)")
 	}
 
 	db, err := sql.Open("sqlite3", "data/questiondb.db")
