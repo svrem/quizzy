@@ -2,6 +2,10 @@ import { useGameSocket } from '@/hooks/useGameSocket';
 import { fireConfetti } from '@/utils/confetti';
 import { useEffect, useRef, useState } from 'react';
 
+const winSound = new Audio(`${process.env.PUBLIC_URL}/audio/win.mp3`);
+winSound.preload = 'auto';
+winSound.volume = 0.5; // Set volume to a reasonable level
+
 export function useGame() {
   const gameSocket = useGameSocket();
   // const { finaliseQuestion, score, streak } = useUserStats();
@@ -82,6 +86,7 @@ export function useGame() {
         }
 
         setSelectedAnswerIndex(null);
+        winSound.play();
 
         const source = selectedOptionRef.current?.getBoundingClientRect();
 

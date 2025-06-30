@@ -11,7 +11,7 @@ type AnswerProps = {
   selectedOptionRef: React.RefObject<HTMLButtonElement | null>;
 };
 
-function Answer({
+function AnswerButton({
   answer,
   correctAnswerIndex,
   index,
@@ -22,7 +22,7 @@ function Answer({
   return (
     <button
       className={cn(
-        'btn btn-primary answer-button relative select-none rounded-2xl bg-answer-button-inactive px-20 text-[2dvh] font-bold transition-all hover:bg-answer-button-hover md:rounded-3xl md:py-10',
+        'btn btn-primary answer-button relative select-none rounded-2xl bg-answer-button-inactive px-20 text-[2dvh] font-bold transition-all md:rounded-3xl md:py-10',
         selectedAnswerIndex === index ? 'selected' : '',
         correctAnswerIndex !== null &&
           (correctAnswerIndex === index ? 'correct' : 'incorrect'),
@@ -61,7 +61,7 @@ export default function AnswersDisplay({
   return (
     <>
       {answers.map((answer, index) => (
-        <Answer
+        <AnswerButton
           key={index}
           answer={answer}
           index={index}

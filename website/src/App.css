@@ -18,12 +18,15 @@
   font-size: calc(min(2dvh, 5dvw));
 }
 
-.answer-button:hover {
-  transform: translateY(-2px);
-  box-shadow:
-    0 calc(var(--answer-button-shadow-offset) + 2px) 0px 0px
-      var(--answer-button-hover-shadow),
-    inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);
+@media (hover: hover) {
+  .answer-button:hover {
+    background-color: var(--answer-button-hover);
+    transform: translateY(-2px);
+    box-shadow:
+      0 calc(var(--answer-button-shadow-offset) + 2px) 0px 0px
+        var(--answer-button-hover-shadow),
+      inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);
+  }
 }
 
 .answer-button.selected {
