@@ -6,7 +6,7 @@ import (
 )
 
 func GetQuestion() (Question, error) {
-	db, err := OpenQuestionsDB()
+	db, err := openQuestionsDB()
 	if err != nil {
 		return Question{}, err
 	}
@@ -23,8 +23,6 @@ func GetQuestion() (Question, error) {
 	} else {
 		difficulty = "easy"
 	}
-
-	println(difficultyNumber, difficulty)
 
 	var question QuestionDB
 	err = db.QueryRow("SELECT question, correct_answer, incorrect_answers, category, difficulty, question_type FROM questions WHERE difficulty = ? ORDER BY RANDOM() LIMIT 1", difficulty).Scan(
