@@ -6,7 +6,10 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN go build -v -o /usr/local/bin ./...
+
+RUN apk add --no-cache build-base
+
+RUN CGO_ENABLED=1 go build -v -o /usr/local/bin ./...
 
 FROM node:24-alpine AS web
 ENV PNPM_HOME="/pnpm"

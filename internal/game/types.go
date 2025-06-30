@@ -22,6 +22,15 @@ type Question struct {
 	Category   string   `json:"category"`
 }
 
+type QuestionDB struct {
+	Question         string `json:"question"`
+	CorrectAnswer    string `json:"correct_answer"`
+	IncorrectAnswers string `json:"incorrect_answers"`
+	Category         string `json:"category"`
+	Difficulty       string `json:"difficulty"`
+	QuestionType     string `json:"question_type"`
+}
+
 type QuestionData struct {
 	Question   string `json:"question"`
 	Difficulty string `json:"difficulty"`

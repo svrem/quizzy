@@ -20,10 +20,9 @@ type Game struct {
 }
 
 func (g *Game) Start() {
-	questionSession := NewQuestionSession()
 
 	for {
-		question, err := questionSession.GetQuestion()
+		question, err := GetQuestion()
 
 		if err != nil {
 			println("Error fetching question:", err.Error())
