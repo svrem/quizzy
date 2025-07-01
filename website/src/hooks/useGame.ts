@@ -4,7 +4,11 @@ import { useEffect, useRef, useState } from 'react';
 
 const winSound = new Audio(`${process.env.PUBLIC_URL}/audio/win.mp3`);
 winSound.preload = 'auto';
-winSound.volume = 0.5; // Set volume to a reasonable level
+// winSound.volume = 0.5; // Set volume to a reasonable level
+
+const loseSound = new Audio(`${process.env.PUBLIC_URL}/audio/lose.mp3`);
+loseSound.preload = 'auto';
+// loseSound.volume = 0.5; // Set volume to a reasonable level
 
 export function useGame() {
   const gameSocket = useGameSocket();
@@ -27,7 +31,7 @@ export function useGame() {
   const selectedOptionRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
-    if (selectedAnswerIndex === null) return;
+    if (selectedAnswerIndex === null || gameSocket === null) return;
 
     gameSocket.send(
       JSON.stringify({
@@ -37,81 +41,72 @@ export function useGame() {
     );
   }, [selectedAnswerIndex, gameSocket]);
 
-  gameSocket.onopen = () => {
-    gameSocket.send(
-      JSON.stringify({
-        type: 'welcome',
-      }),
-    );
-  };
+  if (gameSocket !== null) {
+    gameSocket.onopen = () => {
+      gameSocket.send(
+        JSON.stringify({
+          type: 'welcome',
+        }),
+      );
+    };
 
-  gameSocket.onmessage = async (event: MessageEvent) => {
-    const data = JSON.parse(event.data);
+    gameSocket.onmessage = async (event: MessageEvent) => {
+      const data = JSON.parse(event.data);
 
-    console.log(data);
+      console.log(data);
 
-    switch (data.type) {
-      case 'question': {
-        setQuestion(data.data.question);
-        setDifficulty(data.data.difficulty);
-        setCategory(data.data.category);
-        setAnswers([]);
-        setSelectedAnswerIndex(null);
-        setTimerEndTime(null);
-        setCorrectAnswerIndex(null);
-        break;
-      }
-      case 'start-answer-phase': {
-        setAnswers(data.data.answers);
-
-        setTimerEndTime(data.data.answer_shown_at);
-        break;
-      }
-      case 'update-user-stats': {
-        setScore(data.data.score);
-        setStreak(data.data.streak);
-        break;
-      }
-      case 'show-answer': {
-        setCorrectAnswerIndex(data.data);
-
-        if (selectedAnswerIndex === null) {
+      switch (data.type) {
+        case 'question': {
+          setQuestion(data.data.question);
+          setDifficulty(data.data.difficulty);
+          setCategory(data.data.category);
+          setAnswers([]);
           setSelectedAnswerIndex(null);
-          return;
+          setTimerEndTime(null);
+          setCorrectAnswerIndex(null);
+          break;
         }
+        case 'start-answer-phase': {
+          setAnswers(data.data.answers);
 
-        if (selectedAnswerIndex !== data.data) {
+          setTimerEndTime(data.data.answer_shown_at);
+          break;
+        }
+        case 'update-user-stats': {
+          setScore(data.data.score);
+          setStreak(data.data.streak);
+          break;
+        }
+        case 'show-answer': {
+          setCorrectAnswerIndex(data.data);
+
+          if (selectedAnswerIndex === null) {
+            setSelectedAnswerIndex(null);
+            return;
+          }
+
+          if (selectedAnswerIndex !== data.data) {
+            loseSound.play();
+            setSelectedAnswerIndex(null);
+            return;
+          }
+
           setSelectedAnswerIndex(null);
-          return;
+          winSound.play();
+
+          const source = selectedOptionRef.current?.getBoundingClientRect();
+
+          if (!source) return;
+
+          await fireConfetti({
+            y: source.top / window.innerHeight,
+          });
+
+          break;
         }
-
-        setSelectedAnswerIndex(null);
-        winSound.play();
-
-        const source = selectedOptionRef.current?.getBoundingClientRect();
-
-        if (!source) return;
-
-        await fireConfetti({
-          y: source.top / window.innerHeight,
-        });
-
-        break;
       }
-    }
-  };
-
-  gameSocket.onclose = () => {
-    console.log('WebSocket connection closed');
-
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
-  };
-  gameSocket.onerror = (error: Event) => {
-    console.error('WebSocket error:', error);
-  };
-
+    };
+  }
   return {
     question,
     difficulty,

@@ -53,7 +53,10 @@ export default function UserStatsDisplay({
       </div>
 
       <div className='grid place-content-center p-1'>
-        <div className='aspect-square h-10 w-10 rounded-full bg-theme-accent-color p-2 md:h-16 md:w-16'>
+        <div className='relative aspect-square h-10 w-10 rounded-full bg-theme-accent-color p-2 md:h-16 md:w-16'>
+          <p className='save-progress-text absolute w-24 rounded-sm bg-red-500 p-1 text-center text-[0.6rem] font-semibold md:w-36 md:text-sm'>
+            Login to save your progress!
+          </p>
           <UserIcon />
         </div>
       </div>

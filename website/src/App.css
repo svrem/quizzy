@@ -57,3 +57,63 @@
 
   color: rgba(255, 255, 255, 0.8);
 }
+
+.save-progress-text {
+  top: 0rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+
+  transform-origin: center calc(100% + 1.25rem);
+
+  animation: rotate 10s linear infinite;
+}
+
+.save-progress-text::after {
+  content: ' ';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+
+  border-top: 5px solid red;
+
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: -5px;
+}
+
+@media (min-width: 768px) {
+  .save-progress-text {
+    transform-origin: center calc(100% + 2rem);
+  }
+}
+
+@keyframes rotate {
+  97% {
+    transform: translateX(-50%) translateY(-100%) rotate(0deg);
+  }
+  98% {
+    transform: translateX(-50%) translateY(-100%) rotate(-3deg);
+  }
+  99% {
+    transform: translateX(-50%) translateY(-100%) rotate(3deg);
+  }
+  100% {
+    transform: translateX(-50%) translateY(-100%) rotate(0deg);
+  }
+}
+
+.login-popup {
+  background-color: hsl(255.6, 64%, 15%);
+  box-shadow:
+    0 5px 0 0 hsl(255.6, 64%, 10%),
+    inset 0px 1px 0 0px rgba(255, 255, 255, 0.2);
+}
+
+.oauth-button {
+  background-color: hsl(255.6, 64%, 20%);
+  box-shadow:
+    0 5px 0 0 hsl(255.6, 64%, 13%),
+    inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);
+}
