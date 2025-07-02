@@ -36,30 +36,31 @@ export default function LoginOverlay() {
         </p>
 
         <div className='flex w-full flex-col items-center gap-3'>
-          <a
-            href='#'
-            className='oauth-button flex w-full select-none items-center justify-center gap-3 rounded-lg py-4 text-center text-sm font-bold md:py-5 md:text-xl'
-          >
-            <img
-              src='/icons/google.svg'
-              alt='Google Icon'
-              className='inline-block h-6 w-6'
-            />
-            Google
-          </a>
-          <a
-            href='#'
-            className='oauth-button flex w-full select-none items-center justify-center gap-3 rounded-lg py-4 text-center text-sm font-bold md:py-5 md:text-xl'
-          >
-            <img
-              src='/icons/discord.svg'
-              alt='Discord Icon'
-              className='inline-block h-6 w-6'
-            />
-            Discord
-          </a>
+          <OAuthButton icon='/icons/google.svg' provider='google' />
+          <OAuthButton icon='/icons/discord.svg' provider='discord' />
         </div>
       </div>
     </Overlay>
+  );
+}
+
+type OAuthButtonProps = {
+  provider: string;
+  icon: string;
+};
+
+function OAuthButton({ icon, provider }: OAuthButtonProps) {
+  return (
+    <a
+      href={`/auth/login/${provider}`}
+      className='oauth-button flex w-full select-none items-center justify-center gap-3 rounded-lg py-4 text-center text-sm font-bold capitalize md:py-5 md:text-xl'
+    >
+      <img
+        src={icon}
+        alt={`${provider} Icon`}
+        className='inline-block h-6 w-6'
+      />
+      {provider}
+    </a>
   );
 }

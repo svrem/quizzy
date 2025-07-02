@@ -4,11 +4,18 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/joho/godotenv"
+
 	"github.com/svrem/quizzy/internal/routes"
 	"github.com/svrem/quizzy/internal/websocket"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	router := routes.NewRouter()
 
 	hub := websocket.NewHub()
