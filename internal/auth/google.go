@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"log"
 	"net/http"
 	"os"
 
+	"github.com/svrem/quizzy/internal/db"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
@@ -108,5 +108,30 @@ func HandleGoogleOAuthCallback(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	log.Printf("User Info: %+v\n", userInfo)
+	userToken, err := generateUserToken(db.User{
+		Email:          userInfo.Email,
+		Username:       userInfo.GivenName,
+		ProfilePicture: userInfo.Picture,
+		Provider:       "google",
+		ProviderID:     userInfo.ID,
+	})
+
+	if err != nil {
+		http.Error(res, "Failed to generate user token: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	tokenCookie := http.Cookie{
+		Name:     "token",
+		Value:    userToken,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Secure:   true,
+		Path:     "/",
+		MaxAge:   60 * 60 * 24 * 7,
+	}
+
+	http.SetCookie(res, &tokenCookie)
+
+	http.Redirect(res, req, "/", http.StatusFound)
 }

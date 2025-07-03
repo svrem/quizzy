@@ -17,6 +17,6 @@
       "@/*": ["src/*"] // Maps the '@' alias to the 'src' directory
     }
   },
-  "include": ["src"], // Specifies the files or directories to include
+  "include": ["src", "src/pages/Game.tsx"], // Specifies the files or directories to include
   "exclude": ["node_modules"] // Excludes unnecessary files or directories
 }

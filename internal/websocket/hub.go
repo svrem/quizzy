@@ -9,13 +9,24 @@ import (
 	"math"
 	"time"
 
+	"github.com/svrem/quizzy/internal/db"
 	"github.com/svrem/quizzy/internal/game"
 )
 
-func welcomeUser(client *Client, game *game.Game) {
+func welcomeUser(client *Client, currentGame *game.Game) {
+
+	msg := game.GenerateUpdateUserStatsMessage(client.user.Streak, client.user.Score)
+	msgStr, err := json.Marshal(msg)
+	if err != nil {
+		println("Error marshalling user stats message:", err)
+		return
+	}
+
+	sendMessageToClient(client, msgStr)
+
 	currentTime := time.Now().UnixMilli()
 
-	questionMessage := game.GenerateQuestionMessage()
+	questionMessage := currentGame.GenerateQuestionMessage()
 	questionMessageStr, err := json.Marshal(questionMessage)
 	if err != nil {
 		println("Error marshalling question message:", err)
@@ -23,11 +34,11 @@ func welcomeUser(client *Client, game *game.Game) {
 	}
 	sendMessageToClient(client, questionMessageStr)
 
-	if currentTime < game.QuestionPreviewDeadline {
+	if currentTime < currentGame.QuestionPreviewDeadline {
 		return
 	}
 
-	answerPhaseMessage := game.GenerateAnswerPhaseMessage()
+	answerPhaseMessage := currentGame.GenerateAnswerPhaseMessage()
 	answerPhaseMessageStr, err := json.Marshal(answerPhaseMessage)
 	if err != nil {
 		println("Error marshalling answer phase message:", err)
@@ -35,11 +46,11 @@ func welcomeUser(client *Client, game *game.Game) {
 	}
 	sendMessageToClient(client, answerPhaseMessageStr)
 
-	if currentTime < game.QuestionSubmissionDeadline {
+	if currentTime < currentGame.QuestionSubmissionDeadline {
 		return
 	}
 
-	showAnswerMessage := game.GenerateShowAnswerMessage()
+	showAnswerMessage := currentGame.GenerateShowAnswerMessage()
 	showAnswerMessageStr, err := json.Marshal(showAnswerMessage)
 	if err != nil {
 		println("Error marshalling show answer message:", err)
@@ -112,7 +123,7 @@ func (h *Hub) Run() {
 			}
 
 			switch messageType {
-			case "welcome":
+			case "hello":
 				welcomeUser(message.Client, currentGame)
 			case "select-answer":
 				answer, ok := msg["answer"].(float64)
@@ -137,26 +148,28 @@ func (h *Hub) Run() {
 			case game.AnswerPhaseEventType:
 				{
 					for client := range h.clients {
-						client.selectedAnswer = -1 // Reset selected answer for all clients
+						client.selectedAnswer = -1
 					}
 				}
 			case game.ShowAnswerEventType:
 				{
+					var updatedUsers []*db.User
+
 					for client := range h.clients {
 						// if the streak is 0 and the client has not selected an answer, nothing will happen, so continue
-						if client.streak == 0 && client.selectedAnswer == -1 {
+						if client.user.Streak == 0 && client.selectedAnswer == -1 {
 							continue
 						}
 
 						if client.selectedAnswer == currentGame.CurrentQuestion.Correct {
-							client.score += int(math.Round(math.Pow(game.BASE_SCORE_INCREMENT, 1+game.SCORE_EXPONENT_INCREMENT*float64(client.streak))))
-							client.streak++
+							client.user.Score += int(math.Round(math.Pow(game.BASE_SCORE_INCREMENT, 1+game.SCORE_EXPONENT_INCREMENT*float64(client.user.Streak))))
+							client.user.Streak++
 
 						} else {
-							client.streak = 0
+							client.user.Streak = 0
 						}
 
-						msg := game.GenerateUpdateUserStatsMessage(client.streak, client.score)
+						msg := game.GenerateUpdateUserStatsMessage(client.user.Streak, client.user.Score)
 						msgStr, err := json.Marshal(msg)
 						if err != nil {
 							println("Error marshalling user stats message:", err)
@@ -164,7 +177,14 @@ func (h *Hub) Run() {
 						}
 
 						sendMessageToClient(client, msgStr)
+
+						if client.user.ID != "" {
+							updatedUsers = append(updatedUsers, client.user)
+						}
 					}
+
+					// Update the users in the database
+					db.UpdateManyUsers(updatedUsers)
 				}
 			}
 

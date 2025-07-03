@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/svrem/quizzy/internal/db"
 )
 
 const (
@@ -51,8 +52,7 @@ type Client struct {
 	send chan []byte
 
 	// User data
-	streak         int
-	score          int
+	user           *db.User
 	selectedAnswer int
 }
 

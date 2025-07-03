@@ -3,6 +3,9 @@ package websocket
 import (
 	"log"
 	"net/http"
+
+	"github.com/svrem/quizzy/internal/auth"
+	"github.com/svrem/quizzy/internal/db"
 )
 
 // serveWs handles websocket requests from the peer.
@@ -12,7 +15,21 @@ func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), streak: 0, score: 0, selectedAnswer: -1}
+
+	// get the user token from the cookie
+	cookie, err := r.Cookie("token")
+	var user *db.User = &db.User{
+		Streak: 0,
+		Score:  0,
+	}
+	if err == nil {
+		user, err = auth.GetUserFromToken(cookie.Value)
+		if err == nil {
+		}
+		// ser.UserGameStatsID
+	}
+
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), selectedAnswer: -1, user: user}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in

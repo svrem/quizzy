@@ -45,7 +45,7 @@ export function useGame() {
     gameSocket.onopen = () => {
       gameSocket.send(
         JSON.stringify({
-          type: 'welcome',
+          type: 'hello',
         }),
       );
     };

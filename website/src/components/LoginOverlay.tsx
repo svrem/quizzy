@@ -1,13 +1,17 @@
 import Overlay from '@/components/Overlay';
 import { useState } from 'react';
 
-export default function LoginOverlay() {
+type LoginOverlayProps = {
+  closeLoginOverlay: () => void;
+};
+
+export default function LoginOverlay({ closeLoginOverlay }: LoginOverlayProps) {
   const [pageOpen, setPageOpen] = useState<'login' | 'signup'>('login');
 
   return (
-    <Overlay backgroundBlur>
+    <Overlay backgroundBlur onClick={closeLoginOverlay}>
       <div className='login-popup relative flex w-[95%] max-w-[50rem] flex-col items-center gap-5 rounded-xl bg-answer-button-inactive p-3 md:p-5'>
-        <button className='absolute right-5 top-5'>
+        <button onClick={closeLoginOverlay} className='absolute right-5 top-5'>
           <img
             src='/icons/close.svg'
             alt='Close Icon'
