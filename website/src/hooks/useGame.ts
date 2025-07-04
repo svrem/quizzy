@@ -36,7 +36,6 @@ export function useGame() {
     if (authenticatedState === 'loading' || user === null) return;
 
     setScore(user.startingScore);
-    setStreak(user.startingStreak);
   }, [authenticatedState, user]);
 
   useEffect(() => {

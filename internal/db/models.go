@@ -23,7 +23,7 @@ type User struct {
 	Provider   string `gorm:"uniqueIndex:idx_provider_provider_id;not null"`
 	ProviderID string `gorm:"uniqueIndex:idx_provider_provider_id;not null"`
 
-	Streak    int `gorm:"default:0"`
+	Streak    int `gorm:"-:all"`
 	MaxStreak int `gorm:"default:0"`
 	Score     int `gorm:"default:0"`
 }
