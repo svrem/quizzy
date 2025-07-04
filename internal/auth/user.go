@@ -106,6 +106,7 @@ func GetUserFromTokenHandler(res http.ResponseWriter, req *http.Request) {
 		"profile_picture": user.ProfilePicture,
 		"streak":          strconv.Itoa(user.Streak),
 		"score":           strconv.Itoa(user.Score),
+		"max_streak":      strconv.Itoa(user.MaxStreak),
 	}
 	if err := json.NewEncoder(res).Encode(response); err != nil {
 		http.Error(res, "Failed to encode response: "+err.Error(), http.StatusInternalServerError)
@@ -127,4 +128,37 @@ func LogoutHandler(res http.ResponseWriter, req *http.Request) {
 	})
 
 	http.Redirect(res, req, "/", http.StatusSeeOther)
+}
+
+func GetUserDetailsHandler(res http.ResponseWriter, req *http.Request) {
+	tokenCookie, err := req.Cookie("token")
+	if err != nil {
+		http.Error(res, "Token cookie not found", http.StatusUnauthorized)
+		return
+	}
+
+	user, err := GetUserFromToken(tokenCookie.Value)
+
+	if err != nil {
+		http.Error(res, "Invalid token: "+err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	ranking, err := db.GetUserRanking(user)
+	if err != nil {
+		http.Error(res, "Failed to get user ranking: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res.Header().Set("Content-Type", "application/json")
+	res.WriteHeader(http.StatusOK)
+
+	response := map[string]int{
+		"ranking": ranking,
+		"level":   user.Score / 100,
+	}
+	if err := json.NewEncoder(res).Encode(response); err != nil {
+		http.Error(res, "Failed to encode response: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

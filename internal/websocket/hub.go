@@ -155,6 +155,10 @@ func (h *Hub) Run() {
 							client.user.Score += int(math.Round(math.Pow(game.BASE_SCORE_INCREMENT, 1+game.SCORE_EXPONENT_INCREMENT*float64(client.user.Streak))))
 							client.user.Streak++
 
+							if client.user.Streak > client.user.MaxStreak {
+								client.user.MaxStreak = client.user.Streak
+							}
+
 						} else {
 							client.user.Streak = 0
 						}

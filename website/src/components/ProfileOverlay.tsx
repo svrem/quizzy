@@ -1,14 +1,43 @@
 import { useAuth } from '@/context/AuthContext';
 import Overlay from './Overlay';
+import { useEffect, useState } from 'react';
 
 export default function ProfileOverlay({
   closeProfileOverlay,
   overlayOpen,
+  score,
 }: {
   closeProfileOverlay: () => void;
   overlayOpen: boolean;
+  score: number;
 }) {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
+
+  const [loading, setLoading] = useState(true);
+  const [userRanking, setUserRanking] = useState<number | null>(null);
+  const [userLevel, setUserLevel] = useState<number | null>(null);
+
+  useEffect(() => {
+    async function fetchUserData() {
+      if (!overlayOpen) return;
+
+      setLoading(true);
+      await refreshUser();
+      const response = await fetch('/api/user/details');
+      if (!response.ok) {
+        console.error('Failed to fetch user details');
+        setLoading(false);
+        return;
+      }
+
+      const data = await response.json();
+      setUserRanking(data.ranking);
+      setUserLevel(data.level);
+
+      setLoading(false);
+    }
+    fetchUserData();
+  }, [overlayOpen, score]);
 
   return (
     <Overlay
@@ -26,7 +55,7 @@ export default function ProfileOverlay({
           {user?.username}
         </h3>
         <p className='text-sm font-semibold text-gray-300'>
-          LEVEL {(user?.startingScore || 0) / 100}
+          LEVEL {!loading ? userLevel || 0 : '--'}
         </p>
 
         <div className='mt-5 grid w-full grid-cols-2 gap-2 md:grid-cols-3'>
@@ -38,7 +67,9 @@ export default function ProfileOverlay({
             />
             <div className='items-center text-[12px] font-semibold text-gray-500 md:text-base'>
               Max Streak
-              <p className='text-lg font-bold text-base-text-color'>15</p>
+              <p className='text-lg font-bold text-base-text-color'>
+                {!loading ? user?.maxStreak || 0 : '--'}
+              </p>
             </div>
           </div>
 
@@ -50,7 +81,9 @@ export default function ProfileOverlay({
             />
             <div className='items-center text-[12px] font-semibold text-gray-500 md:text-base'>
               Rank
-              <p className='text-lg font-bold text-base-text-color'>#15</p>
+              <p className='text-lg font-bold text-base-text-color'>
+                {!loading ? `#${userRanking}` : '--'}
+              </p>
             </div>
           </div>
 
@@ -62,7 +95,9 @@ export default function ProfileOverlay({
             />
             <div className='items-center text-[12px] font-semibold text-gray-500 md:text-base'>
               Score
-              <p className='text-lg font-bold text-base-text-color'>15</p>
+              <p className='text-lg font-bold text-base-text-color'>
+                {!loading ? user?.startingScore || 0 : '--'}
+              </p>
             </div>
           </div>
         </div>

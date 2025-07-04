@@ -40,3 +40,13 @@ func UpdateManyUsers(users []*User) error {
 	}
 	return nil
 }
+
+func GetUserRanking(user *User) (int, error) {
+	var count int64
+	if err := db.Model(&User{}).Where("score > ?", user.Score).Count(&count).Error; err != nil {
+		return 0, err
+	}
+
+	ranking := int(count) + 1
+	return ranking, nil
+}

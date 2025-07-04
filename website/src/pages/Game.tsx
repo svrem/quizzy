@@ -87,6 +87,7 @@ function GamePage() {
       <ProfileOverlay
         closeProfileOverlay={() => setProfileOverlayOpen(false)}
         overlayOpen={profileOverlayOpen}
+        score={score}
       />
     </>
   );
