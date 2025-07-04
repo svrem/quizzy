@@ -106,7 +106,7 @@ function UserAvatar({
       >
         {authenticatedState === 'unauthenticated' && (
           <p className='save-progress-text absolute w-24 rounded-sm bg-red-500 p-1 text-center text-[0.6rem] font-semibold md:w-36 md:text-sm'>
-            Login to save your progress!
+            Log in to save your progress!
           </p>
         )}
         {user?.avatarUrl && (
