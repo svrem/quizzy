@@ -1,16 +1,18 @@
+import { useAuth } from '@/context/AuthContext';
 import { useGameSocket } from '@/hooks/useGameSocket';
 import { fireConfetti } from '@/utils/confetti';
 import { useEffect, useRef, useState } from 'react';
 
 const winSound = new Audio(`${process.env.PUBLIC_URL}/audio/win.mp3`);
 winSound.preload = 'auto';
-// winSound.volume = 0.5; // Set volume to a reasonable level
+winSound.volume = 0.5;
 
 const loseSound = new Audio(`${process.env.PUBLIC_URL}/audio/lose.mp3`);
 loseSound.preload = 'auto';
-// loseSound.volume = 0.5; // Set volume to a reasonable level
+loseSound.volume = 0.5;
 
 export function useGame() {
+  const { authenticatedState, user } = useAuth();
   const gameSocket = useGameSocket();
   // const { finaliseQuestion, score, streak } = useUserStats();
   const [streak, setStreak] = useState(0);
@@ -29,6 +31,13 @@ export function useGame() {
   const [timerEndTime, setTimerEndTime] = useState<number | null>(null);
 
   const selectedOptionRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    if (authenticatedState === 'loading' || user === null) return;
+
+    setScore(user.startingScore);
+    setStreak(user.startingStreak);
+  }, [authenticatedState, user]);
 
   useEffect(() => {
     if (selectedAnswerIndex === null || gameSocket === null) return;

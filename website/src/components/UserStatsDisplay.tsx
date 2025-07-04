@@ -31,10 +31,12 @@ export default function UserStatsDisplay({
             alt='Score Icon'
             className='mx-1 h-6 w-6 md:h-10 md:w-10'
           />
-          <SlotCounter
-            value={scoreFormat.format(score)}
-            numberSlotClassName='text-xl font-bold md:text-4xl'
-          />
+          {authenticatedState !== 'loading' && (
+            <SlotCounter
+              value={scoreFormat.format(score)}
+              numberSlotClassName='text-xl font-bold md:text-4xl'
+            />
+          )}
         </div>
         <p className='text-sm font-semibold text-gray-400 md:text-base'>
           Score
@@ -48,10 +50,12 @@ export default function UserStatsDisplay({
             alt='Streaks Icon'
             className='h-6 w-6 md:h-10 md:w-10'
           />
-          <SlotCounter
-            value={scoreFormat.format(streak)}
-            numberSlotClassName='text-xl font-bold md:text-4xl'
-          />
+          {authenticatedState !== 'loading' && (
+            <SlotCounter
+              value={scoreFormat.format(streak)}
+              numberSlotClassName='text-xl font-bold md:text-4xl'
+            />
+          )}
         </div>
         <p className='text-sm font-semibold text-gray-400 md:text-base'>
           Streak

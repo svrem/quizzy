@@ -7,6 +7,8 @@ type UserResp = {
   email: string;
   profile_picture?: string;
   username: string;
+  streak: string;
+  score: string;
 };
 
 type User = {
@@ -14,6 +16,9 @@ type User = {
   username: string;
   email: string;
   avatarUrl?: string;
+
+  startingStreak: number;
+  startingScore: number;
 };
 
 type AuthContextType = {
@@ -48,6 +53,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
           username: data.username,
           email: data.email,
           avatarUrl: data.profile_picture || undefined,
+          startingStreak: parseInt(data.streak, 10),
+          startingScore: parseInt(data.score, 10),
         });
         setAuthenticatedState('authenticated');
       } catch (error) {

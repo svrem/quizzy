@@ -14,16 +14,6 @@ import (
 )
 
 func welcomeUser(client *Client, currentGame *game.Game) {
-
-	msg := game.GenerateUpdateUserStatsMessage(client.user.Streak, client.user.Score)
-	msgStr, err := json.Marshal(msg)
-	if err != nil {
-		println("Error marshalling user stats message:", err)
-		return
-	}
-
-	sendMessageToClient(client, msgStr)
-
 	currentTime := time.Now().UnixMilli()
 
 	questionMessage := currentGame.GenerateQuestionMessage()

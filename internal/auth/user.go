@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -103,6 +104,8 @@ func GetUserFromTokenHandler(res http.ResponseWriter, req *http.Request) {
 		"email":           user.Email,
 		"username":        user.Username,
 		"profile_picture": user.ProfilePicture,
+		"streak":          strconv.Itoa(user.Streak),
+		"score":           strconv.Itoa(user.Score),
 	}
 	if err := json.NewEncoder(res).Encode(response); err != nil {
 		http.Error(res, "Failed to encode response: "+err.Error(), http.StatusInternalServerError)

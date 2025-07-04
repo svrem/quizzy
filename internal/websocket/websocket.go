@@ -23,8 +23,9 @@ func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		Score:  0,
 	}
 	if err == nil {
-		user, err = auth.GetUserFromToken(cookie.Value)
+		userDB, err := auth.GetUserFromToken(cookie.Value)
 		if err == nil {
+			user = userDB
 		}
 		// ser.UserGameStatsID
 	}
