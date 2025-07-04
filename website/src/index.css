@@ -53,4 +53,6 @@ code {
   --answer-correct-shadow: hsl(140, 70%, 35%);
   --answer-incorrect: hsl(345, 75%, 40%);
   --answer-incorrect-shadow: hsl(345, 75%, 30%);
+
+  --secondary-background-color: hsl(255.6, 64%, 20%);
 }

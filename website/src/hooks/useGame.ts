@@ -13,8 +13,8 @@ loseSound.volume = 0.5;
 
 export function useGame() {
   const { authenticatedState, user } = useAuth();
+
   const gameSocket = useGameSocket();
-  // const { finaliseQuestion, score, streak } = useUserStats();
   const [streak, setStreak] = useState(0);
   const [score, setScore] = useState(0);
 
@@ -61,8 +61,6 @@ export function useGame() {
 
     gameSocket.onmessage = async (event: MessageEvent) => {
       const data = JSON.parse(event.data);
-
-      console.log(data);
 
       switch (data.type) {
         case 'question': {

@@ -111,8 +111,8 @@
     inset 0px 1px 0 0px rgba(255, 255, 255, 0.2);
 }
 
-.oauth-button {
-  background-color: hsl(255.6, 64%, 20%);
+.secondary-display {
+  background-color: var(--secondary-background-color);
   box-shadow:
     0 5px 0 0 hsl(255.6, 64%, 13%),
     inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);

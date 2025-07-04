@@ -7,6 +7,7 @@ import UserStatsDisplay from '@/components/UserStatsDisplay';
 import { useGame } from '@/hooks/useGame';
 import LoginOverlay from '@/components/LoginOverlay';
 import { useState } from 'react';
+import ProfileOverlay from '@/components/ProfileOverlay';
 
 function GamePage() {
   const {
@@ -24,6 +25,7 @@ function GamePage() {
   } = useGame();
 
   const [loginOverlayOpen, setLoginOverlayOpen] = useState(false);
+  const [profileOverlayOpen, setProfileOverlayOpen] = useState(false);
 
   return (
     <>
@@ -62,6 +64,7 @@ function GamePage() {
             score={score}
             streak={streak}
             openLoginOverlay={() => setLoginOverlayOpen(true)}
+            openProfileOverlay={() => setProfileOverlayOpen(true)}
           />
         </div>
 
@@ -76,9 +79,15 @@ function GamePage() {
         )}
       </div>
 
-      {loginOverlayOpen && (
-        <LoginOverlay closeLoginOverlay={() => setLoginOverlayOpen(false)} />
-      )}
+      <LoginOverlay
+        closeLoginOverlay={() => setLoginOverlayOpen(false)}
+        overlayOpen={loginOverlayOpen}
+      />
+
+      <ProfileOverlay
+        closeProfileOverlay={() => setProfileOverlayOpen(false)}
+        overlayOpen={profileOverlayOpen}
+      />
     </>
   );
 }

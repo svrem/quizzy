@@ -112,3 +112,19 @@ func GetUserFromTokenHandler(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 }
+
+func LogoutHandler(res http.ResponseWriter, req *http.Request) {
+	// Clear the token cookie by setting its expiry to a past time
+	http.SetCookie(res, &http.Cookie{
+		Name:     "token",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		Expires:  time.Now().Add(-1 * time.Hour),
+		HttpOnly: true,
+		SameSite: http.SameSiteStrictMode,
+		Secure:   req.TLS != nil,
+	})
+
+	http.Redirect(res, req, "/", http.StatusSeeOther)
+}

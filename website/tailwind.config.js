@@ -9,6 +9,7 @@ module.exports = {
         'answer-button-inactive': 'var(--answer-button-inactive)',
         'answer-button-active': 'var(--answer-button-active)',
         'answer-button-hover': 'var(--answer-button-hover)',
+        'secondary-background-color': 'var(--secondary-background-color)',
       },
       animation: {
         'fade-in-slide': 'fadeInSlide 0.5s ease-out forwards',

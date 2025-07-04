@@ -40,6 +40,19 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const fetchUser = async () => {
+      setUser({
+        email: 'svrem@icloud.com',
+        id: '123',
+        username: 'svrem',
+        avatarUrl:
+          'https://lh3.googleusercontent.com/a/ACg8ocJXHrC2raMaIyM28MQWAhHskjE3SWtOsNv1y5w3wSNkRppfZQ=s96-c',
+        startingStreak: 0,
+        startingScore: 0,
+      });
+      setAuthenticatedState('authenticated');
+
+      return;
+
       try {
         const response = await fetch(`/auth/user`);
         if (!response.ok) {
