@@ -48,5 +48,5 @@ func verifyChallenge(challengeToken string, nonce int64) bool {
 	hashHex := fmt.Sprintf("%x", hash)
 
 	// Check if the hash starts with required number of zeros (difficulty: 4 zeros)
-	return strings.HasPrefix(hashHex, "0000")
+	return strings.HasPrefix(hashHex, "000")
 }
