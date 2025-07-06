@@ -1,6 +1,6 @@
 import { useAuth } from '@/context/AuthContext';
-import Overlay from './Overlay';
 import { useEffect, useState } from 'react';
+import Overlay from './Overlay';
 
 export default function ProfileOverlay({
   closeProfileOverlay,
@@ -37,7 +37,7 @@ export default function ProfileOverlay({
       setLoading(false);
     }
     fetchUserData();
-  }, [overlayOpen, score]);
+  }, [overlayOpen, score, refreshUser]);
 
   return (
     <Overlay

@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 type authenticatedState = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -41,7 +47,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   >('loading');
   const [user, setUser] = useState<User | null>(null);
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const response = await fetch(`/auth/user`);
       if (!response.ok) {
@@ -63,11 +69,11 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       setAuthenticatedState('unauthenticated');
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [fetchUser]);
 
   return (
     <AuthContext.Provider

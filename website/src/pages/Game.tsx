@@ -2,12 +2,12 @@ import '@/App.css';
 
 import AnswersDisplay from '@/components/AnswersDisplay';
 import GameTimer from '@/components/GameTimer';
+import LoginOverlay from '@/components/LoginOverlay';
+import ProfileOverlay from '@/components/ProfileOverlay';
 import QuestionDisplay from '@/components/QuestionDisplay';
 import UserStatsDisplay from '@/components/UserStatsDisplay';
 import { useGame } from '@/hooks/useGame';
-import LoginOverlay from '@/components/LoginOverlay';
 import { useState } from 'react';
-import ProfileOverlay from '@/components/ProfileOverlay';
 
 function GamePage() {
   const {
