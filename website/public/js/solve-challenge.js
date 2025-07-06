@@ -8,7 +8,7 @@ onmessage = (e) => {
 
   while (true) {
     const hash = sha512(`${code}${nonce}`);
-    if (hash.startsWith('0000')) {
+    if (hash.startsWith('000')) {
       postMessage({
         nonce: nonce,
       });
