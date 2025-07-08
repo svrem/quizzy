@@ -12,6 +12,7 @@ const scoreFormat = new Intl.NumberFormat('en-US', {
 type UserStatsDisplayProps = {
   score: number;
   streak: number;
+  showCategorySelector: boolean;
   openLoginOverlay: () => void;
   openProfileOverlay: () => void;
 };
@@ -19,11 +20,17 @@ type UserStatsDisplayProps = {
 export default function UserStatsDisplay({
   score,
   streak,
+  showCategorySelector,
   openLoginOverlay,
   openProfileOverlay,
 }: UserStatsDisplayProps) {
   return (
-    <div className='row-start-5 grid grid-cols-3 rounded-xl bg-black/30'>
+    <div
+      className={cn(
+        'row-start-1 mt-3 grid grid-cols-3 rounded-xl bg-black/30 md:mt-5',
+        showCategorySelector ? 'row-start-1' : 'row-start-5',
+      )}
+    >
       <ScoreDisplay score={score} />
       <StreakDisplay streak={streak} />
       <UserAvatar

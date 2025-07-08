@@ -1,6 +1,7 @@
 package game
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -27,6 +28,14 @@ func (g *Game) Start() {
 		return
 	}
 	defer CloseQuestionDB()
+
+	categories, err := getCategories()
+
+	if err != nil {
+		println("Error fetching categories:", err.Error())
+		return
+	}
+	fmt.Println(categories)
 
 	for {
 		question, err := getQuestion()
