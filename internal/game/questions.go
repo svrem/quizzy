@@ -5,12 +5,31 @@ import (
 	"math/rand"
 )
 
-func GetQuestion() (Question, error) {
-	db, err := openQuestionsDB()
+func getCategories() ([]string, error) {
+	var categories []string
+
+	rows, err := questionDB.Query("SELECT DISTINCT category FROM questions")
 	if err != nil {
-		return Question{}, err
+		return nil, err // Other error
 	}
-	defer db.Close()
+	defer rows.Close()
+
+	for rows.Next() {
+		var category string
+		if err := rows.Scan(&category); err != nil {
+			return nil, err // Scan error
+		}
+		categories = append(categories, category)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err // Rows error
+	}
+
+	return categories, nil
+}
+
+func getQuestion() (Question, error) {
 
 	var difficulty string
 
@@ -25,7 +44,7 @@ func GetQuestion() (Question, error) {
 	}
 
 	var question QuestionDB
-	err = db.QueryRow("SELECT question, correct_answer, incorrect_answers, category, difficulty, question_type FROM questions WHERE difficulty = ? ORDER BY RANDOM() LIMIT 1", difficulty).Scan(
+	err := questionDB.QueryRow("SELECT question, correct_answer, incorrect_answers, category, difficulty, question_type FROM questions WHERE difficulty = ? ORDER BY RANDOM() LIMIT 1", difficulty).Scan(
 		&question.Question,
 		&question.CorrectAnswer,
 		&question.IncorrectAnswers,

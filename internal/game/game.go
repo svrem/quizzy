@@ -20,15 +20,16 @@ type Game struct {
 }
 
 func (g *Game) Start() {
-	_, err := openQuestionsDB()
+	err := InitializeQuestionDB()
 
 	if err != nil {
 		println("Error opening questions database:", err.Error())
 		return
 	}
+	defer CloseQuestionDB()
 
 	for {
-		question, err := GetQuestion()
+		question, err := getQuestion()
 
 		if err != nil {
 			println("Error fetching question:", err.Error())

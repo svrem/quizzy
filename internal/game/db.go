@@ -8,17 +8,27 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func openQuestionsDB() (*sql.DB, error) {
+var questionDB *sql.DB
+
+func InitializeQuestionDB() error {
 
 	if _, err := os.Stat("data/questiondb.db"); errors.Is(err, os.ErrNotExist) {
-		return nil, errors.New("questions database does not exist at the specified path (data/questiondb.db)")
+		return errors.New("questions database does not exist at the specified path (data/questiondb.db)")
 	}
 
-	db, err := sql.Open("sqlite3", "data/questiondb.db")
+	var err error
+	questionDB, err = sql.Open("sqlite3", "data/questiondb.db")
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return db, nil
+	return nil
+}
+
+func CloseQuestionDB() error {
+	if questionDB != nil {
+		return questionDB.Close()
+	}
+	return nil
 }
