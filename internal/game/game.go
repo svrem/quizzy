@@ -7,7 +7,7 @@ import (
 
 const (
 	QuestionDuration   = 5
-	AnswerDuration     = 15
+	AnswerDuration     = 10
 	ShowAnswerDuration = 5
 )
 

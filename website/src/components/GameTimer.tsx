@@ -34,13 +34,13 @@ export default function GameTimer({ timerEndTime }: GameTimerProps) {
   return (
     <CircularProgressbar
       className='col-start-3 h-12 !w-12 justify-self-end font-bold md:h-24 md:!w-24'
-      value={timerCountdown ?? 15}
+      value={timerCountdown ?? 10}
       text={
         timerCountdown
           ? String(Math.max(timerCountdown, 0)).padStart(2, '0')
           : '00'
       }
-      maxValue={15}
+      maxValue={10}
       backgroundPadding={6}
       styles={buildStyles({
         trailColor: 'hsla(0, 0%, 0%, 0.4)',

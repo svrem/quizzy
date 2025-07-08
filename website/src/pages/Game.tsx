@@ -30,7 +30,7 @@ function GamePage() {
 
   const [possibleCategories] = useState(['Entertainment', 'Nature', 'Art']);
 
-  const showCategorySelector = true;
+  const showCategorySelector = false;
 
   return (
     <>
