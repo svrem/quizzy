@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -61,6 +62,11 @@ func main() {
 		if err != nil {
 			log.Println("Failed to fetch questions:", err.Error())
 			return
+		}
+
+		for i := range questions {
+			parts := strings.Split(questions[i].Category, ":")
+			questions[i].Category = parts[0]
 		}
 
 		err = addQuestionsToDB(db, questions)
