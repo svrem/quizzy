@@ -1,6 +1,7 @@
 import '@/App.css';
 
 import AnswersDisplay from '@/components/AnswersDisplay';
+import CategorySelector from '@/components/CategorySelector';
 import GameTimer from '@/components/GameTimer';
 import LoginOverlay from '@/components/LoginOverlay';
 import ProfileOverlay from '@/components/ProfileOverlay';
@@ -30,7 +31,7 @@ function GamePage() {
 
   const [possibleCategories] = useState(['Entertainment', 'Nature', 'Art']);
 
-  const showCategorySelector = false;
+  const showCategorySelector = true;
 
   return (
     <>
@@ -64,36 +65,7 @@ function GamePage() {
         )}
 
         {showCategorySelector && (
-          <div
-            className='flex flex-col'
-            style={{
-              gridRow: 'span 13 / span 13',
-            }}
-          >
-            <h2 className='m-3 text-center text-xl'>Choose new category!</h2>
-
-            <div className='grid w-full flex-grow select-none grid-cols-3 gap-2 md:gap-5'>
-              {possibleCategories.map((possibleCategory, i) => (
-                <div
-                  className='category-selector animate-fade-in overflow-hidden rounded-xl opacity-0'
-                  key={possibleCategory}
-                  style={{
-                    backgroundImage: `url(/images/${possibleCategory.toLowerCase()}.jpg)`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    animationDelay: `${i * 0.6}s`,
-                  }}
-                  aria-label={`Select category: ${possibleCategory}`}
-                >
-                  <div className='flex h-full w-full items-center justify-center bg-black/60 transition-colors hover:bg-black/50 focus:bg-black/40'>
-                    <p className='text-center text-[4vw] font-bold md:text-4xl'>
-                      {possibleCategory}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <CategorySelector possibleCategories={possibleCategories} />
         )}
 
         <div
