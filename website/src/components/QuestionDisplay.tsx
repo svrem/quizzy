@@ -21,7 +21,7 @@ export default function QuestionDisplay({
       <div className='flex items-center justify-center gap-2 text-sm font-semibold text-gray-400 md:gap-3 md:text-lg'>
         <p
           dangerouslySetInnerHTML={{
-            __html: category ? category.split(':')[0] : '',
+            __html: category || '',
           }}
           className='animate-fade-in-slide capitalize opacity-0'
           style={{ animationDelay: '0.4s' }}
