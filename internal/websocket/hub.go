@@ -16,6 +16,34 @@ import (
 func welcomeUser(client *Client, currentGame *game.Game) {
 	currentTime := time.Now().UnixMilli()
 
+	if len(currentGame.SelectedCategories) != 0 {
+		questionMessage := currentGame.GenerateCategorySelectionMessage()
+		questionMessageStr, err := json.Marshal(questionMessage)
+		if err != nil {
+			println("Error marshalling category selection message:", err)
+			return
+		}
+		sendMessageToClient(client, questionMessageStr)
+
+		if currentTime < currentGame.CategorySelectionDeadline {
+			return
+		}
+
+		questionMessage = currentGame.GenerateCategoryVotesMessage()
+		questionMessageStr, err = json.Marshal(questionMessage)
+		if err != nil {
+			println("Error marshalling category votes message:", err)
+			return
+		}
+		sendMessageToClient(client, questionMessageStr)
+
+		return
+	}
+
+	if currentGame.CurrentQuestion == nil {
+		return
+	}
+
 	questionMessage := currentGame.GenerateQuestionMessage()
 	questionMessageStr, err := json.Marshal(questionMessage)
 	if err != nil {
@@ -123,6 +151,19 @@ func (h *Hub) Run() {
 				}
 
 				message.Client.selectedAnswer = int(answer)
+			case "select-category":
+				category, ok := msg["category"].(float64)
+				if !ok || category < 0 || int(category) >= len(currentGame.SelectedCategories) {
+					println("Invalid category vote")
+					continue
+				}
+
+				if message.Client.selectedCategory != -1 {
+					currentGame.CategoryVotes[message.Client.selectedCategory]--
+				}
+
+				message.Client.selectedCategory = int(category)
+				currentGame.CategoryVotes[int(category)]++
 			default:
 				println("Unknown message type:", messageType)
 			}
@@ -141,6 +182,13 @@ func (h *Hub) Run() {
 						client.selectedAnswer = -1
 					}
 				}
+			case game.CategoryVotesEventType:
+				{
+					for client := range h.clients {
+						client.selectedCategory = -1
+					}
+
+				}
 			case game.ShowAnswerEventType:
 				{
 					var updatedUsers []*db.User
@@ -152,7 +200,7 @@ func (h *Hub) Run() {
 						}
 
 						if client.selectedAnswer == currentGame.CurrentQuestion.Correct {
-							client.user.Score += int(math.Round(math.Pow(game.BASE_SCORE_INCREMENT, 1+game.SCORE_EXPONENT_INCREMENT*float64(client.user.Streak))))
+							client.user.Score += int(math.Round(math.Pow(game.BaseScoreIncrement, 1+game.ScoreExponentIncrement*float64(client.user.Streak))))
 							client.user.Streak++
 
 							if client.user.Streak > client.user.MaxStreak {

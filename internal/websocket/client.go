@@ -52,8 +52,9 @@ type Client struct {
 	send chan []byte
 
 	// User data
-	user           *db.User
-	selectedAnswer int
+	user             *db.User
+	selectedAnswer   int
+	selectedCategory int
 }
 
 // readPump pumps messages from the websocket connection to the hub.

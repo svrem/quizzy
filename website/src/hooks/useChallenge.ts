@@ -33,7 +33,6 @@ export function useChallenge() {
       console.error('Challenge worker error:', error);
       challengeWorker.terminate();
     };
-
     challengeWorker.postMessage([data.code]);
   }
 

@@ -28,7 +28,13 @@ export function useGame() {
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number | null>(
     null,
   );
+  const [categoryPossiblities, setCategoryPossibilities] = useState<
+    string[] | null
+  >(null);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [timerEndTime, setTimerEndTime] = useState<number | null>(null);
+  const [duration, setDuration] = useState<number>(0);
+  const [votePercentages, setVotePercentages] = useState<number[] | null>(null);
 
   const selectedOptionRef = useRef<HTMLButtonElement | null>(null);
 
@@ -49,6 +55,17 @@ export function useGame() {
     );
   }, [selectedAnswerIndex, gameSocket]);
 
+  useEffect(() => {
+    if (selectedCategory === null || gameSocket === null) return;
+
+    gameSocket.send(
+      JSON.stringify({
+        type: 'select-category',
+        category: selectedCategory,
+      }),
+    );
+  }, [selectedCategory, gameSocket]);
+
   if (gameSocket !== null) {
     gameSocket.onopen = () => {
       gameSocket.send(
@@ -66,7 +83,10 @@ export function useGame() {
           setQuestion(data.data.question);
           setDifficulty(data.data.difficulty);
           setCategory(data.data.category);
+          setCategoryPossibilities(null);
           setAnswers([]);
+          setVotePercentages(null);
+          setSelectedCategory(null);
           setSelectedAnswerIndex(null);
           setTimerEndTime(null);
           setCorrectAnswerIndex(null);
@@ -76,11 +96,30 @@ export function useGame() {
           setAnswers(data.data.answers);
 
           setTimerEndTime(data.data.answer_shown_at);
+          setDuration(data.data.duration);
           break;
         }
         case 'update-user-stats': {
           setScore(data.data.score);
           setStreak(data.data.streak);
+          break;
+        }
+        case 'category-selection': {
+          setQuestion(null);
+          setDifficulty(null);
+          setCategory(null);
+          setAnswers([]);
+          setSelectedAnswerIndex(null);
+          setCorrectAnswerIndex(null);
+
+          setCategoryPossibilities(data.data.categories);
+          setTimerEndTime(data.data.end_time);
+          setDuration(data.data.duration);
+
+          break;
+        }
+        case 'category-votes': {
+          setVotePercentages(data.data.vote_percentages);
           break;
         }
         case 'show-answer': {
@@ -121,9 +160,14 @@ export function useGame() {
     selectedAnswerIndex,
     correctAnswerIndex,
     timerEndTime,
+    duration,
     selectedOptionRef,
     score,
     streak,
+    categoryPossiblities,
+    selectedCategory,
+    votePercentages,
     setSelectedAnswerIndex,
+    setSelectedCategory,
   };
 }

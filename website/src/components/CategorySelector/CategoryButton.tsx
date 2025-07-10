@@ -1,40 +1,65 @@
+import { cn } from '@/utils/utils';
 import { useState } from 'react';
 
 type CategorySelectorProps = {
   category: string;
   index: number;
+  selected: boolean;
+  votePercentage?: number;
+  onClick: () => void;
 };
 
 export default function CategoryButton({
   category,
   index,
+  selected,
+  votePercentage,
+  onClick,
 }: CategorySelectorProps) {
-  const [imageLoaded, setImageLoaded] = useState(false);
-
   return (
     <button
-      className='category-selector relative animate-fade-in overflow-hidden rounded-xl opacity-0'
+      className={
+        'category-selector relative animate-fade-in overflow-hidden rounded-xl opacity-0 transition-all' +
+        (selected ? ' selected' : '')
+      }
       key={category}
+      onClick={onClick}
       style={{
+        backgroundImage: `url(/images/${category.toLowerCase().replaceAll(' ', '_')}.jpg)`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         animationDelay: `${index * 0.6}s`,
       }}
       aria-label={`Select category: ${category}`}
     >
-      <img
-        src={`/images/${category.toLowerCase()}.jpg`}
-        alt={category}
-        className='h-full w-full object-cover transition-opacity'
+      <div
+        className={cn(
+          'absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black/70 transition-all duration-500',
+          votePercentage === undefined && selected
+            ? 'bg-black/0'
+            : 'bg-black/70 hover:bg-black/60',
+        )}
         style={{
-          opacity: imageLoaded ? 1 : 0,
+          height: `${100 - (votePercentage || 0)}%`,
         }}
-        onLoad={() => setImageLoaded(true)}
-        loading='lazy'
       />
-      <div className='absolute top-0 flex h-full w-full items-center justify-center bg-black/60 transition-colors hover:bg-black/50'>
-        <p className='select-none text-center text-[4vw] font-bold md:text-4xl'>
-          {category}
-        </p>
-      </div>
+      <div
+        className='absolute bottom-0 left-0 h-0 w-full bg-theme-accent-color opacity-20 transition-all duration-500'
+        style={{
+          height: `${votePercentage}%`,
+        }}
+      />
+      <p
+        className={cn(
+          'absolute bottom-0 top-0 my-auto h-fit w-full select-none py-2 text-center text-[4vw] font-bold transition-colors md:text-4xl',
+          selected || votePercentage !== undefined
+            ? 'bg-black/50'
+            : 'bg-black/0',
+        )}
+        dangerouslySetInnerHTML={{
+          __html: category,
+        }}
+      />
     </button>
   );
 }

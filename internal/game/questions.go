@@ -29,7 +29,7 @@ func getCategories() ([]string, error) {
 	return categories, nil
 }
 
-func getQuestion() (Question, error) {
+func getQuestion(category string) (Question, error) {
 
 	var difficulty string
 
@@ -44,7 +44,7 @@ func getQuestion() (Question, error) {
 	}
 
 	var question QuestionDB
-	err := questionDB.QueryRow("SELECT question, correct_answer, incorrect_answers, category, difficulty, question_type FROM questions WHERE difficulty = ? ORDER BY RANDOM() LIMIT 1", difficulty).Scan(
+	err := questionDB.QueryRow("SELECT question, correct_answer, incorrect_answers, category, difficulty, question_type FROM questions WHERE difficulty = ? AND category = ? ORDER BY RANDOM() LIMIT 1", difficulty, category).Scan(
 		&question.Question,
 		&question.CorrectAnswer,
 		&question.IncorrectAnswers,

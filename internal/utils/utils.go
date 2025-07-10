@@ -12,3 +12,12 @@ func GenerateRandomCode() string {
 	}
 	return base64.URLEncoding.EncodeToString(b)
 }
+
+func Contains(slice []string, item string) bool {
+	for _, v := range slice {
+		if v == item {
+			return true
+		}
+	}
+	return false
+}

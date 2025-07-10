@@ -19,19 +19,22 @@ function GamePage() {
     category,
     selectedAnswerIndex,
     correctAnswerIndex,
-    setSelectedAnswerIndex,
+    selectedCategory,
     selectedOptionRef,
+    categoryPossiblities,
     timerEndTime,
+    duration,
     score,
     streak,
+    votePercentages,
+    setSelectedCategory,
+    setSelectedAnswerIndex,
   } = useGame();
 
   const [loginOverlayOpen, setLoginOverlayOpen] = useState(false);
   const [profileOverlayOpen, setProfileOverlayOpen] = useState(false);
 
-  const [possibleCategories] = useState(['Entertainment', 'Nature', 'Art']);
-
-  const showCategorySelector = true;
+  const showCategorySelector = categoryPossiblities !== null;
 
   return (
     <>
@@ -48,7 +51,7 @@ function GamePage() {
             Quizzy
           </h1>
 
-          <GameTimer timerEndTime={timerEndTime} />
+          <GameTimer timerEndTime={timerEndTime} duration={duration} />
         </div>
 
         {!showCategorySelector && (
@@ -65,7 +68,12 @@ function GamePage() {
         )}
 
         {showCategorySelector && (
-          <CategorySelector possibleCategories={possibleCategories} />
+          <CategorySelector
+            possibleCategories={categoryPossiblities}
+            setSelectedCategory={setSelectedCategory}
+            votePercentages={votePercentages}
+            selectedCategory={selectedCategory}
+          />
         )}
 
         <div
@@ -95,7 +103,7 @@ function GamePage() {
           />
         </div>
 
-        {answers.length === 0 && (
+        {answers.length === 0 && !showCategorySelector && (
           <div className='pointer-events-none absolute left-0 top-0 grid h-full w-full place-items-center'>
             <QuestionDisplay
               category={category}

@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'theme-accent-color': 'var(--theme-accent-color)',
+        'theme-accent-color': 'hsl(var(--theme-accent-color))',
         'base-text-color': 'var(--base-text-color)',
         'answer-button-inactive': 'var(--answer-button-inactive)',
         'answer-button-active': 'var(--answer-button-active)',

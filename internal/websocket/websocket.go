@@ -53,7 +53,7 @@ func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		// ser.UserGameStatsID
 	}
 
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), selectedAnswer: -1, user: user}
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), selectedAnswer: -1, selectedCategory: -1, user: user}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in

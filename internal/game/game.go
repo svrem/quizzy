@@ -1,23 +1,25 @@
 package game
 
 import (
-	"fmt"
+	"math/rand"
 	"time"
-)
 
-const (
-	QuestionDuration   = 5
-	AnswerDuration     = 10
-	ShowAnswerDuration = 5
+	"github.com/svrem/quizzy/internal/utils"
 )
 
 type Game struct {
 	Listen chan GameEvent
 
-	CurrentQuestion Question
+	CurrentQuestion *Question
 
 	QuestionPreviewDeadline    int64
 	QuestionSubmissionDeadline int64
+
+	CategorySelectionDeadline int64
+
+	SelectedCategory   string
+	SelectedCategories []string
+	CategoryVotes      [3]int
 }
 
 func (g *Game) Start() {
@@ -29,16 +31,69 @@ func (g *Game) Start() {
 	}
 	defer CloseQuestionDB()
 
+	for {
+		selectedCategories, err := pickThreeRandomCategories()
+
+		if err != nil {
+			println("Error picking categories:", err.Error())
+			return
+		}
+
+		g.SelectedCategories = selectedCategories
+		g.CategoryVotes = [3]int{0, 0, 0}
+
+		g.CategorySelectionDeadline = time.Now().Add(CategorySelectionDuration * time.Second).UnixMilli()
+		g.Listen <- g.GenerateCategorySelectionMessage()
+
+		time.Sleep(CategorySelectionDuration * time.Second)
+
+		// get the max category vote and set the selected category
+		maxVotes := -1
+		maxCategoryIndex := -1
+		for i, votes := range g.CategoryVotes {
+			if votes > maxVotes {
+				maxVotes = votes
+				maxCategoryIndex = i
+			}
+		}
+
+		g.Listen <- g.GenerateCategoryVotesMessage()
+
+		time.Sleep(ShowAnswerDuration * time.Second)
+		g.SelectedCategory = g.SelectedCategories[maxCategoryIndex]
+		g.SelectedCategories = make([]string, 0, 3)
+
+		g.PlayQuestions()
+
+	}
+
+}
+
+func pickThreeRandomCategories() ([]string, error) {
 	categories, err := getCategories()
 
 	if err != nil {
-		println("Error fetching categories:", err.Error())
-		return
+		return nil, err
 	}
-	fmt.Println(categories)
 
-	for {
-		question, err := getQuestion()
+	selectedCategories := make([]string, 0, 3)
+	for len(selectedCategories) < 3 {
+		randomIndex := rand.Intn(len(categories))
+
+		if utils.Contains(selectedCategories, categories[randomIndex]) {
+			continue // Skip if the category is already selected
+		}
+
+		selectedCategories = append(selectedCategories, categories[randomIndex])
+	}
+	return selectedCategories, nil
+}
+
+func (g *Game) PlayQuestions() {
+	questionIndex := 0
+
+	for questionIndex < AmountOfQuestionsPerCategory {
+		question, err := getQuestion(g.SelectedCategory)
 
 		if err != nil {
 			println("Error fetching question:", err.Error())
@@ -46,7 +101,7 @@ func (g *Game) Start() {
 		}
 
 		// Set up the current question and end time
-		g.CurrentQuestion = question
+		g.CurrentQuestion = &question
 		g.QuestionPreviewDeadline = time.Now().Add(QuestionDuration * time.Second).UnixMilli()
 
 		// Start the game with question
@@ -64,6 +119,8 @@ func (g *Game) Start() {
 		g.Listen <- g.GenerateShowAnswerMessage()
 
 		time.Sleep(ShowAnswerDuration * time.Second)
+
+		questionIndex++
 	}
 }
 
@@ -88,6 +145,7 @@ func (g *Game) GenerateAnswerPhaseMessage() GameEvent {
 		Type: AnswerPhaseEventType,
 		Data: AnswerPhaseData{
 			AnswerShownAt: g.QuestionSubmissionDeadline,
+			Duration:      AnswerDuration,
 			Answers:       question.Answers,
 		},
 	}
@@ -111,6 +169,46 @@ func GenerateUpdateUserStatsMessage(
 		Data: map[string]interface{}{
 			"streak": newStreak,
 			"score":  newScore,
+		},
+	}
+}
+
+func (g *Game) GenerateCategorySelectionMessage() GameEvent {
+	return GameEvent{
+		Type: CategorySelectionEventType,
+		Data: CategorySelectionData{
+			Categories: g.SelectedCategories,
+			EndTime:    g.CategorySelectionDeadline,
+			Duration:   CategorySelectionDuration,
+		},
+	}
+}
+
+func (g *Game) GenerateCategoryVotesMessage() GameEvent {
+	voteSum := g.CategoryVotes[0] + g.CategoryVotes[1] + g.CategoryVotes[2]
+
+	votePercentages := make([]float64, 3)
+	if voteSum > 0 {
+		votePercentages[0] = float64(g.CategoryVotes[0]) / float64(voteSum) * 100
+		votePercentages[1] = float64(g.CategoryVotes[1]) / float64(voteSum) * 100
+		votePercentages[2] = float64(g.CategoryVotes[2]) / float64(voteSum) * 100
+	}
+
+	// max category vote and set the selected category
+	maxVotes := -1
+	maxCategoryIndex := -1
+	for i, votes := range g.CategoryVotes {
+		if votes > maxVotes {
+			maxVotes = votes
+			maxCategoryIndex = i
+		}
+	}
+
+	return GameEvent{
+		Type: CategoryVotesEventType,
+		Data: CategoryVotesData{
+			VotePercentages:  votePercentages,
+			SelectedCategory: maxCategoryIndex,
 		},
 	}
 }

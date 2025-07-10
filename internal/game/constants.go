@@ -1,4 +1,15 @@
 package game
 
-const BASE_SCORE_INCREMENT = 10
-const SCORE_EXPONENT_INCREMENT = 0.1
+const (
+	QuestionDuration   = 5
+	AnswerDuration     = 10
+	ShowAnswerDuration = 5
+
+	CategorySelectionDuration    = 20
+	CategoryDisplayVotesDuration = 5
+
+	AmountOfQuestionsPerCategory = 10
+
+	BaseScoreIncrement     = 10
+	ScoreExponentIncrement = 0.1
+)

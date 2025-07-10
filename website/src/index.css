@@ -39,7 +39,7 @@ code {
 }
 
 :root {
-  --theme-accent-color: hsl(45, 100%, 50%);
+  --theme-accent-color: 45, 100%, 50%;
   --base-text-color: hsl(60, 30%, 96.08%);
 
   --answer-button-inactive: hsl(249.78, 61.33%, 29.41%);
