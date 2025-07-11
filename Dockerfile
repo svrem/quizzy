@@ -1,6 +1,6 @@
 FROM golang:alpine AS build
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY go.mod go.sum ./
 RUN go mod download
@@ -9,7 +9,7 @@ COPY . .
 
 RUN apk add --no-cache build-base
 
-RUN CGO_ENABLED=1 go build -v -o /usr/local/bin ./...
+RUN CGO_ENABLED=1 go build -v ./cmd/quizzy/quizzy.go
 
 FROM node:24-alpine AS web
 ENV PNPM_HOME="/pnpm"
@@ -29,7 +29,7 @@ FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=build /usr/local/bin/quizzy ./
+COPY --from=build /app/quizzy ./
 RUN mkdir ./website
 COPY --from=web-build /app/build ./website/build
 
