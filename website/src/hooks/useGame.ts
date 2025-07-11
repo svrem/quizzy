@@ -2,17 +2,21 @@ import { useAuth } from '@/context/AuthContext';
 import { useGameSocket } from '@/hooks/useGameSocket';
 import { fireConfetti } from '@/utils/confetti';
 import { useEffect, useRef, useState } from 'react';
+import { useAudio } from '@/hooks//useAudio';
 
-const winSound = new Audio(`${process.env.PUBLIC_URL}/audio/win.mp3`);
-winSound.preload = 'auto';
-winSound.volume = 0.5;
+// const winSound = new Audio(`${process.env.PUBLIC_URL}/audio/win.mp3`);
+// winSound.preload = 'auto';
+// winSound.volume = 0.5;
 
-const loseSound = new Audio(`${process.env.PUBLIC_URL}/audio/lose.mp3`);
-loseSound.preload = 'auto';
-loseSound.volume = 0.5;
+// const loseSound = new Audio(`${process.env.PUBLIC_URL}/audio/lose.mp3`);
+// loseSound.preload = 'auto';
+// loseSound.volume = 0.5;
 
 export function useGame() {
   const { authenticatedState, user } = useAuth();
+
+  const winSound = useAudio(`${process.env.PUBLIC_URL}/audio/win.mp3`);
+  const loseSound = useAudio(`${process.env.PUBLIC_URL}/audio/lose.mp3`);
 
   const gameSocket = useGameSocket();
   const [streak, setStreak] = useState(0);
