@@ -6,6 +6,7 @@ type AnswerProps = {
   answer: string;
   index: number;
   selectedAnswerIndex: number | null;
+  percentage?: number;
   correctAnswerIndex: number | null;
   setSelectedAnswerIndex: (index: number) => void;
   selectedOptionRef: React.RefObject<HTMLButtonElement | null>;
@@ -16,13 +17,14 @@ function AnswerButton({
   correctAnswerIndex,
   index,
   selectedAnswerIndex,
+  percentage,
   setSelectedAnswerIndex,
   selectedOptionRef,
 }: AnswerProps) {
   return (
     <button
       className={cn(
-        'btn btn-primary answer-button relative mt-3 select-none rounded-2xl bg-answer-button-inactive px-20 text-[2dvh] font-bold transition-all md:mt-5 md:rounded-3xl md:py-10',
+        'btn btn-primary answer-button relative mt-3 select-none overflow-hidden rounded-2xl bg-answer-button-inactive px-20 text-[2dvh] font-bold transition-all md:mt-5 md:rounded-3xl md:py-10',
         selectedAnswerIndex === index ? 'selected' : '',
         correctAnswerIndex !== null &&
           (correctAnswerIndex === index ? 'correct' : 'incorrect'),
@@ -32,6 +34,14 @@ function AnswerButton({
       }}
       ref={selectedAnswerIndex === index ? selectedOptionRef : null}
     >
+      <div
+        className='progress absolute left-0 top-0 h-full w-[50%] transition-all'
+        style={{
+          width: percentage ? `${percentage}%` : '0%',
+        }}
+      />
+      <div className='shine absolute left-0 top-0 h-full w-full rounded-2xl transition-all md:rounded-3xl' />
+
       <p
         dangerouslySetInnerHTML={{
           __html: ALPHABET[index] + ') ' + answer,
@@ -47,13 +57,14 @@ type AnswersDisplayProps = {
   selectedAnswerIndex: number | null;
   correctAnswerIndex: number | null;
   setSelectedAnswerIndex: (index: number) => void;
+  answerPercentages: number[] | null;
   selectedOptionRef: React.RefObject<HTMLButtonElement | null>;
 };
 
 export default function AnswersDisplay({
   answers,
   selectedAnswerIndex,
-
+  answerPercentages,
   correctAnswerIndex,
   setSelectedAnswerIndex,
   selectedOptionRef,
@@ -65,6 +76,7 @@ export default function AnswersDisplay({
           key={index}
           answer={answer}
           index={index}
+          percentage={answerPercentages ? answerPercentages[index] : undefined}
           selectedAnswerIndex={selectedAnswerIndex}
           correctAnswerIndex={correctAnswerIndex}
           setSelectedAnswerIndex={setSelectedAnswerIndex}

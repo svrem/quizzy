@@ -4,14 +4,6 @@ import { fireConfetti } from '@/utils/confetti';
 import { useEffect, useRef, useState } from 'react';
 import { useAudio } from '@/hooks//useAudio';
 
-// const winSound = new Audio(`${process.env.PUBLIC_URL}/audio/win.mp3`);
-// winSound.preload = 'auto';
-// winSound.volume = 0.5;
-
-// const loseSound = new Audio(`${process.env.PUBLIC_URL}/audio/lose.mp3`);
-// loseSound.preload = 'auto';
-// loseSound.volume = 0.5;
-
 export function useGame() {
   const { authenticatedState, user } = useAuth();
 
@@ -35,6 +27,9 @@ export function useGame() {
   const [categoryPossiblities, setCategoryPossibilities] = useState<
     string[] | null
   >(null);
+  const [answerPercentages, setAnswerPercentages] = useState<number[] | null>(
+    null,
+  );
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [timerEndTime, setTimerEndTime] = useState<number | null>(null);
   const [duration, setDuration] = useState<number>(0);
@@ -89,6 +84,7 @@ export function useGame() {
           setCategory(data.data.category);
           setCategoryPossibilities(null);
           setAnswers([]);
+          setAnswerPercentages(null);
           setVotePercentages(null);
           setSelectedCategory(null);
           setSelectedAnswerIndex(null);
@@ -127,14 +123,15 @@ export function useGame() {
           break;
         }
         case 'show-answer': {
-          setCorrectAnswerIndex(data.data);
+          setCorrectAnswerIndex(data.data.correct);
+          setAnswerPercentages(data.data.percentages);
 
           if (selectedAnswerIndex === null) {
             setSelectedAnswerIndex(null);
             return;
           }
 
-          if (selectedAnswerIndex !== data.data) {
+          if (selectedAnswerIndex !== data.data.correct) {
             loseSound.play();
             setSelectedAnswerIndex(null);
             return;
@@ -156,6 +153,16 @@ export function useGame() {
       }
     };
   }
+
+  // useEffect(() => {
+  //   setQuestion('skibidi toilet?');
+  //   setDifficulty('easy');
+  //   setCategory('Music');
+  //   setAnswers(['Yes', 'No']);
+  //   setAnswerPercentages([30, 70]);
+  //   setCorrectAnswerIndex(0);
+  // }, []);
+
   return {
     question,
     difficulty,
@@ -169,6 +176,7 @@ export function useGame() {
     score,
     streak,
     categoryPossiblities,
+    answerPercentages,
     selectedCategory,
     votePercentages,
     setSelectedAnswerIndex,

@@ -11,6 +11,7 @@ type Game struct {
 	Listen chan GameEvent
 
 	CurrentQuestion *Question
+	QuestionVotes   [4]int
 
 	QuestionPreviewDeadline    int64
 	QuestionSubmissionDeadline int64
@@ -102,6 +103,7 @@ func (g *Game) PlayQuestions() {
 
 		// Set up the current question and end time
 		g.CurrentQuestion = &question
+		g.QuestionVotes = [4]int{0, 0, 0, 0}
 		g.QuestionPreviewDeadline = time.Now().Add(QuestionDuration * time.Second).UnixMilli()
 
 		// Start the game with question
@@ -154,9 +156,20 @@ func (g *Game) GenerateAnswerPhaseMessage() GameEvent {
 func (g *Game) GenerateShowAnswerMessage() GameEvent {
 	question := g.CurrentQuestion
 
+	voteSum := g.QuestionVotes[0] + g.QuestionVotes[1] + g.QuestionVotes[2] + g.QuestionVotes[3]
+	answerPercentages := make([]float64, 4)
+	if voteSum > 0 {
+		for i := 0; i < 4; i++ {
+			answerPercentages[i] = float64(g.QuestionVotes[i]) / float64(voteSum) * 100
+		}
+	}
+
 	return GameEvent{
 		Type: ShowAnswerEventType,
-		Data: question.Correct,
+		Data: CorrectAnswerData{
+			Correct:     question.Correct,
+			Percentages: answerPercentages,
+		},
 	}
 }
 

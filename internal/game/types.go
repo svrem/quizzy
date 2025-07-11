@@ -46,6 +46,11 @@ type AnswerPhaseData struct {
 	Answers       []string `json:"answers"`
 }
 
+type CorrectAnswerData struct {
+	Correct     int       `json:"correct"`
+	Percentages []float64 `json:"percentages"`
+}
+
 type CategorySelectionData struct {
 	Categories []string `json:"categories"`
 	EndTime    int64    `json:"end_time"`

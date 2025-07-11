@@ -10,52 +10,57 @@
 }
 
 .answer-button {
-  box-shadow:
-    0 var(--answer-button-shadow-offset) 0px 0px
-      var(--answer-button-inactive-shadow),
-    inset 0px 1px 0px 2px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 var(--answer-button-shadow-offset) 0px 0px
+    var(--answer-button-inactive-shadow);
 
   font-size: calc(min(2dvh, 5dvw));
+
+  & > .shine {
+    box-shadow: inset 0px 1px 0 2px
+      rgba(255, 255, 255, var(--shine-opacity, 0.1));
+  }
 }
 
 @media (hover: hover) {
   .answer-button:hover {
     background-color: var(--answer-button-hover);
     transform: translateY(-2px);
-    box-shadow:
-      0 calc(var(--answer-button-shadow-offset) + 2px) 0px 0px
-        var(--answer-button-hover-shadow),
-      inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 calc(var(--answer-button-shadow-offset) + 2px) 0px 0px
+      var(--answer-button-hover-shadow);
   }
 }
 
 .answer-button.selected {
-  box-shadow:
-    0 var(--answer-button-shadow-offset) 0px var(--answer-button-active-shadow),
-    inset 0px 1px 0 2px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 var(--answer-button-shadow-offset) 0px
+    var(--answer-button-active-shadow);
   background-color: var(--answer-button-active);
 }
 
 .answer-button:active {
   transform: translateY(var(--answer-button-shadow-offset));
-  box-shadow:
-    0 0px 0px 0px var(--answer-button-inactive-shadow),
-    inset 0px 1px 0 2px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 0px 0px 0px var(--answer-button-inactive-shadow);
 }
 
 .answer-button.correct {
   background-color: var(--answer-correct);
-  box-shadow:
-    0 var(--answer-button-shadow-offset) 0px 0px var(--answer-correct-shadow),
-    inset 0px 1px 0 2px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 var(--answer-button-shadow-offset) 0px 0px
+    var(--answer-correct-shadow);
+
+  & > .progress {
+    background-color: var(--answer-correct-percentage);
+  }
+
+  --shine-opacity: 0.5;
 }
 .answer-button.incorrect {
   background-color: var(--answer-incorrect);
-  box-shadow:
-    0 var(--answer-button-shadow-offset) 0px 0px var(--answer-incorrect-shadow),
-    inset 0px 1px 0 2px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 var(--answer-button-shadow-offset) 0px 0px
+    var(--answer-incorrect-shadow);
 
   color: rgba(255, 255, 255, 0.8);
+  & > .progress {
+    background-color: var(--answer-incorrect-percentage);
+  }
 }
 
 .save-progress-text {

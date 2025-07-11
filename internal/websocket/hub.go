@@ -150,7 +150,12 @@ func (h *Hub) Run() {
 					continue
 				}
 
+				if message.Client.selectedAnswer != -1 {
+					currentGame.QuestionVotes[message.Client.selectedAnswer]--
+				}
+
 				message.Client.selectedAnswer = int(answer)
+				currentGame.QuestionVotes[int(answer)]++
 			case "select-category":
 				category, ok := msg["category"].(float64)
 				if !ok || category < 0 || int(category) >= len(currentGame.SelectedCategories) {

@@ -21,6 +21,7 @@ function GamePage() {
     correctAnswerIndex,
     selectedCategory,
     selectedOptionRef,
+    answerPercentages,
     categoryPossiblities,
     timerEndTime,
     duration,
@@ -88,6 +89,7 @@ function GamePage() {
             <AnswersDisplay
               answers={answers}
               correctAnswerIndex={correctAnswerIndex}
+              answerPercentages={answerPercentages}
               selectedAnswerIndex={selectedAnswerIndex}
               setSelectedAnswerIndex={setSelectedAnswerIndex}
               selectedOptionRef={selectedOptionRef}
