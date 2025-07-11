@@ -111,7 +111,6 @@ export function useGame() {
           setAnswers([]);
           setSelectedAnswerIndex(null);
           setCorrectAnswerIndex(null);
-
           setCategoryPossibilities(data.data.categories);
           setTimerEndTime(data.data.end_time);
           setDuration(data.data.duration);
@@ -128,13 +127,13 @@ export function useGame() {
 
           if (selectedAnswerIndex === null) {
             setSelectedAnswerIndex(null);
-            return;
+            break;
           }
 
           if (selectedAnswerIndex !== data.data.correct) {
             loseSound.play();
             setSelectedAnswerIndex(null);
-            return;
+            break;
           }
 
           setSelectedAnswerIndex(null);
@@ -142,7 +141,7 @@ export function useGame() {
 
           const source = selectedOptionRef.current?.getBoundingClientRect();
 
-          if (!source) return;
+          if (!source) break;
 
           await fireConfetti({
             y: source.top / window.innerHeight,
@@ -153,6 +152,8 @@ export function useGame() {
       }
     };
   }
+
+  console.log(votePercentages);
 
   // useEffect(() => {
   //   setQuestion('skibidi toilet?');

@@ -49,10 +49,10 @@ code {
   --answer-button-active: hsl(218.59, 87.67%, 55.49%);
   --answer-button-active-shadow: hsl(218.59, 87.67%, 45.49%);
 
-  --answer-correct: hsl(140, 70%, 45%);
+  --answer-correct: hsl(140, 70%, 40%);
   --answer-correct-percentage: hsl(140, 70%, 50%);
   --answer-correct-shadow: hsl(140, 70%, 35%);
-  --answer-incorrect: hsl(345, 75%, 40%);
+  --answer-incorrect: hsl(345, 75%, 35%);
   --answer-incorrect-percentage: hsl(345, 75%, 45%);
   --answer-incorrect-shadow: hsl(345, 75%, 30%);
 

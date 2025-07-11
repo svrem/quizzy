@@ -35,7 +35,7 @@ function AnswerButton({
       ref={selectedAnswerIndex === index ? selectedOptionRef : null}
     >
       <div
-        className='progress absolute left-0 top-0 h-full w-[50%] transition-all'
+        className='progress absolute left-0 top-0 h-full w-[50%] transition-all duration-500'
         style={{
           width: percentage ? `${percentage}%` : '0%',
         }}
