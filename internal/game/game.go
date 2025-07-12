@@ -1,14 +1,13 @@
 package game
 
 import (
-	"math/rand"
 	"time"
 
-	"github.com/svrem/quizzy/internal/utils"
+	"github.com/svrem/quizzy/internal/protocol"
 )
 
 type Game struct {
-	Listen chan GameEvent
+	Listen chan *protocol.GameEvent
 
 	CurrentQuestion *Question
 	QuestionVotes   [4]int
@@ -70,26 +69,6 @@ func (g *Game) Start() {
 
 }
 
-func pickThreeRandomCategories() ([]string, error) {
-	categories, err := getCategories()
-
-	if err != nil {
-		return nil, err
-	}
-
-	selectedCategories := make([]string, 0, 3)
-	for len(selectedCategories) < 3 {
-		randomIndex := rand.Intn(len(categories))
-
-		if utils.Contains(selectedCategories, categories[randomIndex]) {
-			continue // Skip if the category is already selected
-		}
-
-		selectedCategories = append(selectedCategories, categories[randomIndex])
-	}
-	return selectedCategories, nil
-}
-
 func (g *Game) PlayQuestions() {
 	questionIndex := 0
 
@@ -126,108 +105,8 @@ func (g *Game) PlayQuestions() {
 	}
 }
 
-func (g *Game) GenerateQuestionMessage() GameEvent {
-	question := g.CurrentQuestion
-
-	return GameEvent{
-		Type: QuestionEventType,
-		Data: QuestionData{
-			Question:   question.Question,
-			EndTime:    g.QuestionPreviewDeadline,
-			Difficulty: question.Difficulty,
-			Category:   question.Category,
-		},
-	}
-}
-
-func (g *Game) GenerateAnswerPhaseMessage() GameEvent {
-	question := g.CurrentQuestion
-
-	return GameEvent{
-		Type: AnswerPhaseEventType,
-		Data: AnswerPhaseData{
-			AnswerShownAt: g.QuestionSubmissionDeadline,
-			Duration:      AnswerDuration,
-			Answers:       question.Answers,
-		},
-	}
-}
-
-func (g *Game) GenerateShowAnswerMessage() GameEvent {
-	question := g.CurrentQuestion
-
-	voteSum := g.QuestionVotes[0] + g.QuestionVotes[1] + g.QuestionVotes[2] + g.QuestionVotes[3]
-	answerPercentages := make([]float64, 4)
-	if voteSum > 0 {
-		for i := 0; i < 4; i++ {
-			answerPercentages[i] = float64(g.QuestionVotes[i]) / float64(voteSum) * 100
-		}
-	}
-
-	return GameEvent{
-		Type: ShowAnswerEventType,
-		Data: CorrectAnswerData{
-			Correct:     question.Correct,
-			Percentages: answerPercentages,
-		},
-	}
-}
-
-func GenerateUpdateUserStatsMessage(
-	newStreak int,
-	newScore int,
-) GameEvent {
-	return GameEvent{
-		Type: UpdateUserStatsEventType,
-		Data: map[string]interface{}{
-			"streak": newStreak,
-			"score":  newScore,
-		},
-	}
-}
-
-func (g *Game) GenerateCategorySelectionMessage() GameEvent {
-	return GameEvent{
-		Type: CategorySelectionEventType,
-		Data: CategorySelectionData{
-			Categories: g.SelectedCategories,
-			EndTime:    g.CategorySelectionDeadline,
-			Duration:   CategorySelectionDuration,
-		},
-	}
-}
-
-func (g *Game) GenerateCategoryVotesMessage() GameEvent {
-	voteSum := g.CategoryVotes[0] + g.CategoryVotes[1] + g.CategoryVotes[2]
-
-	votePercentages := make([]float64, 3)
-	if voteSum > 0 {
-		votePercentages[0] = float64(g.CategoryVotes[0]) / float64(voteSum) * 100
-		votePercentages[1] = float64(g.CategoryVotes[1]) / float64(voteSum) * 100
-		votePercentages[2] = float64(g.CategoryVotes[2]) / float64(voteSum) * 100
-	}
-
-	// max category vote and set the selected category
-	maxVotes := -1
-	maxCategoryIndex := -1
-	for i, votes := range g.CategoryVotes {
-		if votes > maxVotes {
-			maxVotes = votes
-			maxCategoryIndex = i
-		}
-	}
-
-	return GameEvent{
-		Type: CategoryVotesEventType,
-		Data: CategoryVotesData{
-			VotePercentages:  votePercentages,
-			SelectedCategory: maxCategoryIndex,
-		},
-	}
-}
-
 func NewGame() *Game {
 	return &Game{
-		Listen: make(chan GameEvent),
+		Listen: make(chan *protocol.GameEvent),
 	}
 }

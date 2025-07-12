@@ -11,6 +11,8 @@ import (
 
 	"github.com/svrem/quizzy/internal/db"
 	"github.com/svrem/quizzy/internal/game"
+	"github.com/svrem/quizzy/internal/protocol"
+	"google.golang.org/protobuf/proto"
 )
 
 func welcomeUser(client *Client, currentGame *game.Game) {
@@ -18,7 +20,7 @@ func welcomeUser(client *Client, currentGame *game.Game) {
 
 	if len(currentGame.SelectedCategories) != 0 {
 		questionMessage := currentGame.GenerateCategorySelectionMessage()
-		questionMessageStr, err := json.Marshal(questionMessage)
+		questionMessageStr, err := proto.Marshal(questionMessage)
 		if err != nil {
 			println("Error marshalling category selection message:", err)
 			return
@@ -30,7 +32,7 @@ func welcomeUser(client *Client, currentGame *game.Game) {
 		}
 
 		questionMessage = currentGame.GenerateCategoryVotesMessage()
-		questionMessageStr, err = json.Marshal(questionMessage)
+		questionMessageStr, err = proto.Marshal(questionMessage)
 		if err != nil {
 			println("Error marshalling category votes message:", err)
 			return
@@ -45,7 +47,7 @@ func welcomeUser(client *Client, currentGame *game.Game) {
 	}
 
 	questionMessage := currentGame.GenerateQuestionMessage()
-	questionMessageStr, err := json.Marshal(questionMessage)
+	questionMessageStr, err := proto.Marshal(questionMessage)
 	if err != nil {
 		println("Error marshalling question message:", err)
 		return
@@ -57,7 +59,7 @@ func welcomeUser(client *Client, currentGame *game.Game) {
 	}
 
 	answerPhaseMessage := currentGame.GenerateAnswerPhaseMessage()
-	answerPhaseMessageStr, err := json.Marshal(answerPhaseMessage)
+	answerPhaseMessageStr, err := proto.Marshal(answerPhaseMessage)
 	if err != nil {
 		println("Error marshalling answer phase message:", err)
 		return
@@ -69,7 +71,7 @@ func welcomeUser(client *Client, currentGame *game.Game) {
 	}
 
 	showAnswerMessage := currentGame.GenerateShowAnswerMessage()
-	showAnswerMessageStr, err := json.Marshal(showAnswerMessage)
+	showAnswerMessageStr, err := proto.Marshal(showAnswerMessage)
 	if err != nil {
 		println("Error marshalling show answer message:", err)
 		return
@@ -154,7 +156,7 @@ func (h *Hub) Run() {
 					currentGame.QuestionVotes[message.Client.selectedAnswer]--
 				}
 
-				message.Client.selectedAnswer = int(answer)
+				message.Client.selectedAnswer = int32(answer)
 				currentGame.QuestionVotes[int(answer)]++
 			case "select-category":
 				category, ok := msg["category"].(float64)
@@ -167,34 +169,34 @@ func (h *Hub) Run() {
 					currentGame.CategoryVotes[message.Client.selectedCategory]--
 				}
 
-				message.Client.selectedCategory = int(category)
+				message.Client.selectedCategory = int32(category)
 				currentGame.CategoryVotes[int(category)]++
 			default:
 				println("Unknown message type:", messageType)
 			}
 
 		case event := <-currentGame.Listen:
-			eventStr, err := json.Marshal(event)
+			eventStr, err := proto.Marshal(event)
 			if err != nil {
 				println("Error marshalling event:", err)
 				continue
 			}
 
 			switch event.Type {
-			case game.AnswerPhaseEventType:
+			case protocol.GameEventType_QUESTION:
 				{
 					for client := range h.clients {
 						client.selectedAnswer = -1
 					}
 				}
-			case game.CategoryVotesEventType:
+			case protocol.GameEventType_CATEGORY_VOTES:
 				{
 					for client := range h.clients {
 						client.selectedCategory = -1
 					}
 
 				}
-			case game.ShowAnswerEventType:
+			case protocol.GameEventType_SHOW_ANSWER:
 				{
 					var updatedUsers []*db.User
 
@@ -217,7 +219,7 @@ func (h *Hub) Run() {
 						}
 
 						msg := game.GenerateUpdateUserStatsMessage(client.user.Streak, client.user.Score)
-						msgStr, err := json.Marshal(msg)
+						msgStr, err := proto.Marshal(msg)
 						if err != nil {
 							println("Error marshalling user stats message:", err)
 							continue

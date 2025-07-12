@@ -1,0 +1,69 @@
+syntax = "proto3";
+package quizzy;
+
+option go_package = "github.com/svrem/quizzy/internal/protocol";
+
+// All possible game event types
+enum GameEventType {
+  QUESTION = 0;
+  START_ANSWER_PHASE = 1;
+  SHOW_ANSWER = 2;
+  UPDATE_USER_STATS = 3;
+  CATEGORY_SELECTION = 4;
+  CATEGORY_VOTES = 5;
+}
+
+// Main GameEvent message
+message GameEvent {
+  GameEventType type = 1;
+
+  oneof event_data {
+    QuestionData question = 2;
+    AnswerPhaseData answer_phase = 3;
+    UpdateUserStatsData update_user_stats = 4;
+    CorrectAnswerData show_answer = 5;
+    CategorySelectionData category_selection = 6;
+    CategoryVotesData category_votes = 7;
+    // Optionally add user stats, etc.
+  }
+}
+
+// Basic question structure for use during gameplay
+message QuestionData {
+  string question = 1;
+  string difficulty = 2;
+  string category = 3;
+  int64 end_time = 4;
+}
+
+// Represents the answer phase (users selecting answers)
+message AnswerPhaseData {
+  int64 answer_shown_at = 1;
+  int32 duration = 2;
+  repeated string answers = 3;
+}
+
+// Shows the correct answer and percentages
+message CorrectAnswerData {
+  int32 correct = 1;
+  repeated float percentages = 2;
+}
+
+// When the user must select a category
+message CategorySelectionData {
+  repeated string categories = 1;
+  int64 end_time = 2;
+  int32 duration = 3;
+}
+
+// Result of voting on a category
+message CategoryVotesData {
+  repeated float vote_percentages = 1;
+  int32 selected_category = 2;
+}
+
+// User statistics for the game
+message UpdateUserStatsData {
+  int32 streak = 1;
+  int32 score = 2;
+}

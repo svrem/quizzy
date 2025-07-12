@@ -18,6 +18,7 @@ export function useGameSocket() {
       websocketUrl.searchParams.set('nonce', nonce?.toString() || '');
 
       const newSocket = new WebSocket(websocketUrl.toString());
+      newSocket.binaryType = 'arraybuffer';
 
       newSocket.onopen = () => {
         console.log('WebSocket connection established');

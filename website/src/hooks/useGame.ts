@@ -4,6 +4,8 @@ import { fireConfetti } from '@/utils/confetti';
 import { useEffect, useRef, useState } from 'react';
 import { useAudio } from '@/hooks//useAudio';
 
+import { quizzy as protobuf, quizzy } from '@/protocol/quizzy.pb';
+
 export function useGame() {
   const { authenticatedState, user } = useAuth();
 
@@ -75,13 +77,18 @@ export function useGame() {
     };
 
     gameSocket.onmessage = async (event: MessageEvent) => {
-      const data = JSON.parse(event.data);
+      const buffer = new Uint8Array(event.data);
+      const gameEvent = protobuf.GameEvent.decode(buffer);
 
-      switch (data.type) {
-        case 'question': {
-          setQuestion(data.data.question);
-          setDifficulty(data.data.difficulty);
-          setCategory(data.data.category);
+      switch (gameEvent.type) {
+        case protobuf.GameEventType.QUESTION: {
+          const question = gameEvent.question;
+
+          if (!question) throw new Error('Question data is missing');
+
+          setQuestion(question.question || null);
+          setDifficulty(question.difficulty || null);
+          setCategory(question.category || null);
           setCategoryPossibilities(null);
           setAnswers([]);
           setAnswerPercentages(null);
@@ -92,45 +99,47 @@ export function useGame() {
           setCorrectAnswerIndex(null);
           break;
         }
-        case 'start-answer-phase': {
-          setAnswers(data.data.answers);
+        case protobuf.GameEventType.START_ANSWER_PHASE: {
+          setAnswers(gameEvent.answerPhase?.answers || []);
 
-          setTimerEndTime(data.data.answer_shown_at);
-          setDuration(data.data.duration);
+          setTimerEndTime(gameEvent.answerPhase?.answerShownAt || null);
+          setDuration(gameEvent.answerPhase?.duration || 0);
           break;
         }
-        case 'update-user-stats': {
-          setScore(data.data.score);
-          setStreak(data.data.streak);
+        case protobuf.GameEventType.UPDATE_USER_STATS: {
+          setScore(gameEvent.updateUserStats?.score || 0);
+          setStreak(gameEvent.updateUserStats?.streak || 0);
           break;
         }
-        case 'category-selection': {
+        case protobuf.GameEventType.CATEGORY_SELECTION: {
           setQuestion(null);
           setDifficulty(null);
           setCategory(null);
           setAnswers([]);
           setSelectedAnswerIndex(null);
           setCorrectAnswerIndex(null);
-          setCategoryPossibilities(data.data.categories);
-          setTimerEndTime(data.data.end_time);
-          setDuration(data.data.duration);
+          setCategoryPossibilities(
+            gameEvent.categorySelection?.categories || null,
+          );
+          setTimerEndTime(gameEvent.categorySelection?.endTime || null);
+          setDuration(gameEvent.categorySelection?.duration || 0);
 
           break;
         }
-        case 'category-votes': {
-          setVotePercentages(data.data.vote_percentages);
+        case protobuf.GameEventType.CATEGORY_VOTES: {
+          setVotePercentages(gameEvent.categoryVotes?.votePercentages || null);
           break;
         }
-        case 'show-answer': {
-          setCorrectAnswerIndex(data.data.correct);
-          setAnswerPercentages(data.data.percentages);
+        case protobuf.GameEventType.SHOW_ANSWER: {
+          setCorrectAnswerIndex(gameEvent.showAnswer?.correct || null);
+          setAnswerPercentages(gameEvent.showAnswer?.percentages || null);
 
           if (selectedAnswerIndex === null) {
             setSelectedAnswerIndex(null);
             break;
           }
 
-          if (selectedAnswerIndex !== data.data.correct) {
+          if (selectedAnswerIndex !== gameEvent.showAnswer?.correct) {
             loseSound.play();
             setSelectedAnswerIndex(null);
             break;
@@ -152,8 +161,6 @@ export function useGame() {
       }
     };
   }
-
-  console.log(votePercentages);
 
   // useEffect(() => {
   //   setQuestion('skibidi toilet?');

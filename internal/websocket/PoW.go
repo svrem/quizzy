@@ -11,6 +11,7 @@ import (
 )
 
 func verifyChallenge(challengeToken string, nonce int64) bool {
+
 	// Get the secret key from environment variable
 	secretKey := os.Getenv("SECRET_KEY")
 	if secretKey == "" {

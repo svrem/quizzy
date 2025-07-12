@@ -3,6 +3,7 @@ package websocket
 import (
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/svrem/quizzy/internal/auth"
@@ -11,26 +12,29 @@ import (
 
 // serveWs handles websocket requests from the peer.
 func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	// Check for challenge token and nonce in query parameters
-	challengeToken := r.URL.Query().Get("challenge_token")
-	nonceStr := r.URL.Query().Get("nonce")
 
-	if challengeToken == "" || nonceStr == "" {
-		http.Error(w, "Challenge token and nonce are required", http.StatusBadRequest)
-		return
-	}
+	if os.Getenv("DISABLE_POW") != "true" {
+		// Check for challenge token and nonce in query parameters
+		challengeToken := r.URL.Query().Get("challenge_token")
+		nonceStr := r.URL.Query().Get("nonce")
 
-	// Convert nonce to int64
-	nonce, err := strconv.ParseInt(nonceStr, 10, 64)
-	if err != nil {
-		http.Error(w, "Invalid nonce", http.StatusBadRequest)
-		return
-	}
+		if challengeToken == "" || nonceStr == "" {
+			http.Error(w, "Challenge token and nonce are required", http.StatusBadRequest)
+			return
+		}
 
-	// Verify the challenge
-	if !verifyChallenge(challengeToken, nonce) {
-		http.Error(w, "Invalid challenge", http.StatusUnauthorized)
-		return
+		// Convert nonce to int64
+		nonce, err := strconv.ParseInt(nonceStr, 10, 64)
+		if err != nil {
+			http.Error(w, "Invalid nonce", http.StatusBadRequest)
+			return
+		}
+
+		// Verify the challenge
+		if !verifyChallenge(challengeToken, nonce) {
+			http.Error(w, "Invalid challenge", http.StatusUnauthorized)
+			return
+		}
 	}
 
 	conn, err := upgrader.Upgrade(w, r, nil)

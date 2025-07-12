@@ -3,6 +3,8 @@ package game
 import (
 	"encoding/json"
 	"math/rand"
+
+	"github.com/svrem/quizzy/internal/utils"
 )
 
 func getCategories() ([]string, error) {
@@ -43,7 +45,7 @@ func getQuestion(category string) (Question, error) {
 		difficulty = "easy"
 	}
 
-	var question QuestionDB
+	var question RawQuestionFromDB
 	err := questionDB.QueryRow("SELECT question, correct_answer, incorrect_answers, category, difficulty, question_type FROM questions WHERE difficulty = ? AND category = ? ORDER BY RANDOM() LIMIT 1", difficulty, category).Scan(
 		&question.Question,
 		&question.CorrectAnswer,
@@ -69,9 +71,29 @@ func getQuestion(category string) (Question, error) {
 	return Question{
 		Question:   question.Question,
 		Answers:    answers,
-		Correct:    correctIndex,
+		Correct:    int32(correctIndex),
 		Difficulty: question.Difficulty,
 		Category:   question.Category,
 	}, nil
 
+}
+
+func pickThreeRandomCategories() ([]string, error) {
+	categories, err := getCategories()
+
+	if err != nil {
+		return nil, err
+	}
+
+	selectedCategories := make([]string, 0, 3)
+	for len(selectedCategories) < 3 {
+		randomIndex := rand.Intn(len(categories))
+
+		if utils.Contains(selectedCategories, categories[randomIndex]) {
+			continue // Skip if the category is already selected
+		}
+
+		selectedCategories = append(selectedCategories, categories[randomIndex])
+	}
+	return selectedCategories, nil
 }

@@ -53,8 +53,8 @@ type Client struct {
 
 	// User data
 	user             *db.User
-	selectedAnswer   int
-	selectedCategory int
+	selectedAnswer   int32
+	selectedCategory int32
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -109,7 +109,7 @@ func (c *Client) writePump() {
 			}
 
 			// Send this message as a separate websocket frame
-			if err := c.conn.WriteMessage(websocket.TextMessage, message); err != nil {
+			if err := c.conn.WriteMessage(websocket.BinaryMessage, message); err != nil {
 				return
 			}
 
