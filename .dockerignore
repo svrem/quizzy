@@ -1,2 +1,4 @@
 website/build
 website/node_modules
+website/src/protocol
+internal/protocol

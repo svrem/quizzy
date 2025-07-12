@@ -29,7 +29,7 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "craco eject",
-    "make-proto": "mkdir -p src/protocol && pbjs -t static-module -w commonjs -o src/protocol/quizzy.pb.js ../protocol/quizzy.proto && pbts -o src/protocol/quizzy.pb.d.ts src/protocol/quizzy.pb.js"
+    "build:proto": "mkdir -p src/protocol && pbjs -t static-module -w commonjs -o src/protocol/quizzy.pb.js ../protocol/quizzy.proto && pbts -o src/protocol/quizzy.pb.d.ts src/protocol/quizzy.pb.js"
   },
   "eslintConfig": {
     "extends": [
