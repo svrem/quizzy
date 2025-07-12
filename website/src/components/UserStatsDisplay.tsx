@@ -27,7 +27,7 @@ export default function UserStatsDisplay({
   return (
     <div
       className={cn(
-        'row-start-1 mt-3 grid grid-cols-3 rounded-xl bg-black/30 md:mt-5',
+        'row-start-1 grid grid-cols-3 rounded-xl bg-black/30',
         showCategorySelector ? 'row-start-1' : 'row-start-5',
       )}
     >

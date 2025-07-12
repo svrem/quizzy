@@ -79,7 +79,7 @@ function GamePage() {
 
         <div
           className={cn(
-            'grid w-full',
+            'answer-grid grid w-full',
             showCategorySelector
               ? 'row-span-2 grid-rows-1'
               : 'row-span-10 grid-rows-5',

@@ -24,7 +24,7 @@ function AnswerButton({
   return (
     <button
       className={cn(
-        'btn btn-primary answer-button relative mt-3 select-none overflow-hidden rounded-2xl bg-answer-button-inactive px-20 text-[2dvh] font-bold transition-all md:mt-5 md:rounded-3xl md:py-10',
+        'btn btn-primary answer-button relative select-none overflow-hidden rounded-2xl bg-answer-button-inactive px-20 text-[2dvh] font-bold transition-all md:rounded-3xl',
         selectedAnswerIndex === index ? 'selected' : '',
         correctAnswerIndex !== null &&
           (correctAnswerIndex === index ? 'correct' : 'incorrect'),

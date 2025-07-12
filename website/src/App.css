@@ -146,3 +146,7 @@
       calc(100% - var(--category-button-progress))
   );
 } */
+
+.answer-grid > * {
+  margin-top: calc(min(2dvh, 1rem));
+}
