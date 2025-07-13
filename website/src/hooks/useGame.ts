@@ -135,7 +135,7 @@ export function useGame() {
           break;
         }
         case protobuf.GameEventType.SHOW_ANSWER: {
-          setCorrectAnswerIndex(gameEvent.showAnswer?.correct || null);
+          setCorrectAnswerIndex(gameEvent.showAnswer?.correct || 0);
           setAnswerPercentages(gameEvent.showAnswer?.percentages || null);
 
           if (selectedAnswerIndex === null) {
