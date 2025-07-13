@@ -67,3 +67,24 @@ message UpdateUserStatsData {
   int32 streak = 1;
   int32 score = 2;
 }
+
+// =========================== User -> Server ===========================
+
+enum UserEventType {
+  HELLO = 0;
+  SELECT_ANSWER = 1;
+  SELECT_CATEGORY = 2;
+}
+
+message UserEvent {
+  UserEventType type = 1;
+
+  oneof event_data {
+    SelectAnswerData select_answer = 2;
+    SelectCategoryData select_category = 3;
+  }
+}
+
+message SelectAnswerData { int32 answerIndex = 1; }
+
+message SelectCategoryData { int32 categoryIndex = 1; }

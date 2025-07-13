@@ -1,5 +1,4 @@
 import { cn } from '@/utils/utils';
-import { useState } from 'react';
 
 type CategorySelectorProps = {
   category: string;

@@ -5,7 +5,6 @@
 package websocket
 
 import (
-	"encoding/json"
 	"math"
 	"time"
 
@@ -129,50 +128,37 @@ func (h *Hub) Run() {
 				close(client.send)
 			}
 		case message := <-h.handleMessage:
-			var msg map[string]interface{}
-			if err := json.Unmarshal(message.Data, &msg); err != nil {
-				println("Error unmarshalling message:", err.Error())
+			var userEvent protocol.UserEvent
+			if err := proto.Unmarshal(message.Data, &userEvent); err != nil {
+				println("Error unmarshalling user event:", err)
 				continue
 			}
 
-			messageType, ok := msg["type"].(string)
-
-			if !ok {
-				println("Invalid message type")
-				continue
-			}
-
-			switch messageType {
-			case "hello":
+			switch userEvent.Type {
+			case protocol.UserEventType_HELLO:
 				welcomeUser(message.Client, currentGame)
-			case "select-answer":
-				answer, ok := msg["answer"].(float64)
-				if !ok {
-					println("Invalid answer format")
-					continue
-				}
+			case protocol.UserEventType_SELECT_ANSWER:
+
+				answerIndex := userEvent.GetSelectAnswer().AnswerIndex
 
 				if message.Client.selectedAnswer != -1 {
 					currentGame.QuestionVotes[message.Client.selectedAnswer]--
 				}
 
-				message.Client.selectedAnswer = int32(answer)
-				currentGame.QuestionVotes[int(answer)]++
-			case "select-category":
-				category, ok := msg["category"].(float64)
-				if !ok || category < 0 || int(category) >= len(currentGame.SelectedCategories) {
-					println("Invalid category vote")
-					continue
-				}
+				message.Client.selectedAnswer = answerIndex
+				currentGame.QuestionVotes[answerIndex]++
+			case protocol.UserEventType_SELECT_CATEGORY:
+
+				categoryIndex := userEvent.GetSelectCategory().CategoryIndex
 
 				if message.Client.selectedCategory != -1 {
 					currentGame.CategoryVotes[message.Client.selectedCategory]--
 				}
 
-				message.Client.selectedCategory = int32(category)
-				currentGame.CategoryVotes[int(category)]++
+				message.Client.selectedCategory = categoryIndex
+				currentGame.CategoryVotes[categoryIndex]++
 			default:
-				println("Unknown message type:", messageType)
+				println("Unknown message type:", userEvent.Type)
 			}
 
 		case event := <-currentGame.Listen:

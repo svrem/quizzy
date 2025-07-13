@@ -48,130 +48,133 @@ export function useGame() {
   useEffect(() => {
     if (selectedAnswerIndex === null || gameSocket === null) return;
 
-    gameSocket.send(
-      JSON.stringify({
-        type: 'select-answer',
-        answer: selectedAnswerIndex,
-      }),
-    );
+    const selectAnswerEvent = protobuf.UserEvent.create({
+      type: protobuf.UserEventType.SELECT_ANSWER,
+      selectAnswer: {
+        answerIndex: selectedAnswerIndex,
+      },
+    });
+
+    gameSocket.send(protobuf.UserEvent.encode(selectAnswerEvent).finish());
   }, [selectedAnswerIndex, gameSocket]);
 
   useEffect(() => {
     if (selectedCategory === null || gameSocket === null) return;
 
-    gameSocket.send(
-      JSON.stringify({
-        type: 'select-category',
-        category: selectedCategory,
-      }),
-    );
+    const selectCategoryEvent = protobuf.UserEvent.create({
+      type: protobuf.UserEventType.SELECT_CATEGORY,
+      selectCategory: {
+        categoryIndex: selectedCategory,
+      },
+    });
+
+    gameSocket.send(protobuf.UserEvent.encode(selectCategoryEvent).finish());
   }, [selectedCategory, gameSocket]);
 
   if (gameSocket !== null) {
     gameSocket.onopen = () => {
-      gameSocket.send(
-        JSON.stringify({
-          type: 'hello',
-        }),
-      );
+      const helloEvent = protobuf.UserEvent.create({
+        type: protobuf.UserEventType.HELLO,
+      });
+
+      gameSocket.send(protobuf.UserEvent.encode(helloEvent).finish());
     };
 
-    // gameSocket.onmessage = async (event: MessageEvent) => {
+    gameSocket.onmessage = async (event: MessageEvent) => {
+      const buffer = new Uint8Array(event.data);
+      const gameEvent = protobuf.GameEvent.decode(buffer);
 
-    //   const buffer = new Uint8Array(event.data);
-    //   const gameEvent = protobuf.GameEvent.decode(buffer);
+      switch (gameEvent.type) {
+        case protobuf.GameEventType.QUESTION: {
+          const question = gameEvent.question;
 
-    //   switch (gameEvent.type) {
-    //     case protobuf.GameEventType.QUESTION: {
-    //       const question = gameEvent.question;
+          if (!question) throw new Error('Question data is missing');
 
-    //       if (!question) throw new Error('Question data is missing');
+          setQuestion(question.question || null);
+          setDifficulty(question.difficulty || null);
+          setCategory(question.category || null);
+          setCategoryPossibilities(null);
+          setAnswers([]);
+          setAnswerPercentages(null);
+          setVotePercentages(null);
+          setSelectedCategory(null);
+          setSelectedAnswerIndex(null);
+          setTimerEndTime(null);
+          setCorrectAnswerIndex(null);
+          break;
+        }
+        case protobuf.GameEventType.START_ANSWER_PHASE: {
+          setAnswers(gameEvent.answerPhase?.answers || []);
 
-    //       setQuestion(question.question || null);
-    //       setDifficulty(question.difficulty || null);
-    //       setCategory(question.category || null);
-    //       setCategoryPossibilities(null);
-    //       setAnswers([]);
-    //       setAnswerPercentages(null);
-    //       setVotePercentages(null);
-    //       setSelectedCategory(null);
-    //       setSelectedAnswerIndex(null);
-    //       setTimerEndTime(null);
-    //       setCorrectAnswerIndex(null);
-    //       break;
-    //     }
-    //     case protobuf.GameEventType.START_ANSWER_PHASE: {
-    //       setAnswers(gameEvent.answerPhase?.answers || []);
+          setTimerEndTime(gameEvent.answerPhase?.answerShownAt || null);
+          setDuration(gameEvent.answerPhase?.duration || 0);
+          break;
+        }
+        case protobuf.GameEventType.UPDATE_USER_STATS: {
+          setScore(gameEvent.updateUserStats?.score || 0);
+          setStreak(gameEvent.updateUserStats?.streak || 0);
+          break;
+        }
+        case protobuf.GameEventType.CATEGORY_SELECTION: {
+          setQuestion(null);
+          setDifficulty(null);
+          setCategory(null);
+          setAnswers([]);
+          setSelectedAnswerIndex(null);
+          setCorrectAnswerIndex(null);
+          setCategoryPossibilities(
+            gameEvent.categorySelection?.categories || null,
+          );
+          setTimerEndTime(gameEvent.categorySelection?.endTime || null);
+          setDuration(gameEvent.categorySelection?.duration || 0);
 
-    //       setTimerEndTime(gameEvent.answerPhase?.answerShownAt || null);
-    //       setDuration(gameEvent.answerPhase?.duration || 0);
-    //       break;
-    //     }
-    //     case protobuf.GameEventType.UPDATE_USER_STATS: {
-    //       setScore(gameEvent.updateUserStats?.score || 0);
-    //       setStreak(gameEvent.updateUserStats?.streak || 0);
-    //       break;
-    //     }
-    //     case protobuf.GameEventType.CATEGORY_SELECTION: {
-    //       setQuestion(null);
-    //       setDifficulty(null);
-    //       setCategory(null);
-    //       setAnswers([]);
-    //       setSelectedAnswerIndex(null);
-    //       setCorrectAnswerIndex(null);
-    //       setCategoryPossibilities(
-    //         gameEvent.categorySelection?.categories || null,
-    //       );
-    //       setTimerEndTime(gameEvent.categorySelection?.endTime || null);
-    //       setDuration(gameEvent.categorySelection?.duration || 0);
+          break;
+        }
+        case protobuf.GameEventType.CATEGORY_VOTES: {
+          setVotePercentages(gameEvent.categoryVotes?.votePercentages || null);
+          break;
+        }
+        case protobuf.GameEventType.SHOW_ANSWER: {
+          setCorrectAnswerIndex(gameEvent.showAnswer?.correct || null);
+          setAnswerPercentages(gameEvent.showAnswer?.percentages || null);
 
-    //       break;
-    //     }
-    //     case protobuf.GameEventType.CATEGORY_VOTES: {
-    //       setVotePercentages(gameEvent.categoryVotes?.votePercentages || null);
-    //       break;
-    //     }
-    //     case protobuf.GameEventType.SHOW_ANSWER: {
-    //       setCorrectAnswerIndex(gameEvent.showAnswer?.correct || null);
-    //       setAnswerPercentages(gameEvent.showAnswer?.percentages || null);
+          if (selectedAnswerIndex === null) {
+            setSelectedAnswerIndex(null);
+            break;
+          }
 
-    //       if (selectedAnswerIndex === null) {
-    //         setSelectedAnswerIndex(null);
-    //         break;
-    //       }
+          if (selectedAnswerIndex !== gameEvent.showAnswer?.correct) {
+            loseSound.play();
+            setSelectedAnswerIndex(null);
+            break;
+          }
 
-    //       if (selectedAnswerIndex !== gameEvent.showAnswer?.correct) {
-    //         loseSound.play();
-    //         setSelectedAnswerIndex(null);
-    //         break;
-    //       }
+          setSelectedAnswerIndex(null);
+          winSound.play();
 
-    //       setSelectedAnswerIndex(null);
-    //       winSound.play();
+          const source = selectedOptionRef.current?.getBoundingClientRect();
 
-    //       const source = selectedOptionRef.current?.getBoundingClientRect();
+          if (!source) break;
 
-    //       if (!source) break;
+          await fireConfetti({
+            y: source.top / window.innerHeight,
+          });
 
-    //       await fireConfetti({
-    //         y: source.top / window.innerHeight,
-    //       });
-
-    //       break;
-    //     }
-    //   }
-    // };
+          break;
+        }
+      }
+    };
   }
 
-  useEffect(() => {
-    setQuestion('skibidi toilet?');
-    setDifficulty('easy');
-    setCategory('Music');
-    setAnswers(['Yes', 'No', 'Sigma', 'Among us']);
-    setAnswerPercentages([30, 70]);
-    setCorrectAnswerIndex(0);
-    // setCategoryPossibilities(['Music', 'Science', 'History']);
-  }, []);
+  // useEffect(() => {
+  //   setQuestion('skibidi toilet?');
+  //   setDifficulty('easy');
+  //   setCategory('Music');
+  //   setAnswers(['Yes', 'No', 'Sigma', 'Among us']);
+  //   setAnswerPercentages([30, 70]);
+  //   setCorrectAnswerIndex(0);
+  //   // setCategoryPossibilities(['Music', 'Science', 'History']);
+  // }, []);
 
   return {
     question,

@@ -2,16 +2,7 @@ package game
 
 import (
 	"github.com/svrem/quizzy/internal/protocol"
-	"google.golang.org/protobuf/proto"
 )
-
-func marshalProtocol(event *protocol.GameEvent) ([]byte, error) {
-	data, err := proto.Marshal(event)
-	if err != nil {
-		return nil, err
-	}
-	return data, nil
-}
 
 func (g *Game) GenerateQuestionMessage() *protocol.GameEvent {
 	question := &protocol.QuestionData{
