@@ -19,6 +19,8 @@ func NewRouter() *http.ServeMux {
 	auth.RegisterRoutes(mux)
 	game.RegisterRoutes(mux)
 
+	mux.HandleFunc("/api/time", timeSyncHandler)
+
 	if isDev {
 		target, _ := url.Parse("http://localhost:3000")
 		proxy := httputil.NewSingleHostReverseProxy(target)

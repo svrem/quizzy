@@ -5,6 +5,7 @@ import { fireConfetti } from '@/utils/confetti';
 import { useEffect, useRef, useState } from 'react';
 
 import { quizzy as protobuf } from '@/protocol/quizzy.pb';
+import { useTimer } from './useTimer';
 
 export function useGame() {
   const { authenticatedState, user } = useAuth();
@@ -13,6 +14,7 @@ export function useGame() {
   const loseSound = useAudio(`${process.env.PUBLIC_URL}/audio/lose.mp3`);
 
   const gameSocket = useGameSocket();
+
   const [streak, setStreak] = useState(0);
   const [score, setScore] = useState(0);
 
@@ -33,9 +35,9 @@ export function useGame() {
     null,
   );
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [timerEndTime, setTimerEndTime] = useState<number | null>(null);
-  const [duration, setDuration] = useState<number>(0);
   const [votePercentages, setVotePercentages] = useState<number[] | null>(null);
+
+  const { duration, resetTimer, setTimer, timerEndTime } = useTimer();
 
   const selectedOptionRef = useRef<HTMLButtonElement | null>(null);
 
@@ -99,15 +101,17 @@ export function useGame() {
           setVotePercentages(null);
           setSelectedCategory(null);
           setSelectedAnswerIndex(null);
-          setTimerEndTime(null);
+          resetTimer();
           setCorrectAnswerIndex(null);
           break;
         }
         case protobuf.GameEventType.START_ANSWER_PHASE: {
           setAnswers(gameEvent.answerPhase?.answers || []);
 
-          setTimerEndTime(gameEvent.answerPhase?.answerShownAt || null);
-          setDuration(gameEvent.answerPhase?.duration || 0);
+          setTimer(
+            gameEvent.answerPhase?.answerShownAt || null,
+            gameEvent.answerPhase?.duration || 0,
+          );
           break;
         }
         case protobuf.GameEventType.UPDATE_USER_STATS: {
@@ -125,8 +129,10 @@ export function useGame() {
           setCategoryPossibilities(
             gameEvent.categorySelection?.categories || null,
           );
-          setTimerEndTime(gameEvent.categorySelection?.endTime || null);
-          setDuration(gameEvent.categorySelection?.duration || 0);
+          setTimer(
+            gameEvent.categorySelection?.endTime || null,
+            gameEvent.categorySelection?.duration || 0,
+          );
 
           break;
         }
