@@ -5,6 +5,7 @@ type CategorySelectorProps = {
   index: number;
   selected: boolean;
   votePercentage?: number;
+  description?: string;
   onClick: () => void;
 };
 
@@ -13,6 +14,7 @@ export default function CategoryButton({
   index,
   selected,
   votePercentage,
+  description,
   onClick,
 }: CategorySelectorProps) {
   return (
@@ -59,6 +61,9 @@ export default function CategoryButton({
           __html: category,
         }}
       />
+      <p className='absolute bottom-0 top-0 my-auto h-fit w-full translate-y-[75%] px-2 text-center text-sm md:translate-y-full md:text-base'>
+        {description}
+      </p>
     </button>
   );
 }

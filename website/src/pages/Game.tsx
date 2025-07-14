@@ -2,12 +2,15 @@ import '@/App.css';
 
 import AnswersDisplay from '@/components/AnswersDisplay';
 import CategorySelector from '@/components/CategorySelector';
+import CategoryButton from '@/components/CategorySelector/CategoryButton';
 import GameTimer from '@/components/GameTimer';
 import LoginOverlay from '@/components/LoginOverlay';
 import ProfileOverlay from '@/components/ProfileOverlay';
 import QuestionDisplay from '@/components/QuestionDisplay';
 import UserStatsDisplay from '@/components/UserStatsDisplay';
+import { DemoState, useDemoContext } from '@/context/DemoContext';
 import { useGame } from '@/hooks/useGame';
+import ArrowRightIcon from '@/icons/arrow-right';
 import { cn } from '@/utils/utils';
 import { useState } from 'react';
 
@@ -32,10 +35,14 @@ function GamePage() {
     setSelectedAnswerIndex,
   } = useGame();
 
+  const { demoState, setDemoState, explainer, nextForExplainer, setExplainer } =
+    useDemoContext();
+
   const [loginOverlayOpen, setLoginOverlayOpen] = useState(false);
   const [profileOverlayOpen, setProfileOverlayOpen] = useState(false);
 
   const showCategorySelector = categoryPossiblities !== null;
+  const giveMeTheRoom = demoState === DemoState.Asking || explainer !== '';
 
   return (
     <>
@@ -55,7 +62,7 @@ function GamePage() {
           <GameTimer timerEndTime={timerEndTime} duration={duration} />
         </div>
 
-        {!showCategorySelector && (
+        {!showCategorySelector && !giveMeTheRoom && (
           <div
             style={{ opacity: answers.length > 0 ? 1 : 0 }}
             className='row-span-5 flex flex-grow flex-col items-center justify-center'
@@ -77,15 +84,68 @@ function GamePage() {
           />
         )}
 
+        {demoState === DemoState.Asking && (
+          <div
+            className='flex flex-col'
+            style={{
+              gridRow: 'span 13 / span 13',
+            }}
+          >
+            <h2 className='m-3 text-center text-xl'>Select a mode.</h2>
+
+            <div className='grid w-full flex-grow grid-cols-2 gap-2 md:gap-5'>
+              <CategoryButton
+                category='Demo'
+                description='When you play the actual game, it will take a while before you see everything, so this demo will just take you through all the content real quick.'
+                index={0}
+                selected={false}
+                onClick={() => {
+                  setDemoState(DemoState.CategoryExplainer);
+                }}
+              />
+              <CategoryButton
+                category='Normal'
+                description='This is the normal mode. Every category contains 10 questions, after that you can choose a new category. This is how the game is meant to be played.'
+                index={1}
+                selected={false}
+                onClick={() => {
+                  setDemoState(DemoState.Normal);
+                }}
+              />
+            </div>
+          </div>
+        )}
+
+        {explainer !== '' && (
+          <div
+            className='flex flex-col items-center justify-center'
+            style={{
+              gridRow: 'span 13 / span 13',
+            }}
+          >
+            <p className='text-center text-xl'>{explainer}</p>
+            <button
+              onClick={() => {
+                setDemoState(nextForExplainer);
+                setExplainer('');
+              }}
+              className='mt-5 flex w-fit items-center gap-1 rounded-lg bg-black/70 px-4 py-2 text-lg font-semibold text-white transition-colors'
+            >
+              Next
+              <ArrowRightIcon />
+            </button>
+          </div>
+        )}
+
         <div
           className={cn(
             'answer-grid grid w-full',
-            showCategorySelector
+            showCategorySelector || giveMeTheRoom
               ? 'row-span-2 grid-rows-1'
               : 'row-span-10 grid-rows-5',
           )}
         >
-          {!showCategorySelector && (
+          {!showCategorySelector && !giveMeTheRoom && (
             <AnswersDisplay
               answers={answers}
               correctAnswerIndex={correctAnswerIndex}
@@ -99,13 +159,13 @@ function GamePage() {
           <UserStatsDisplay
             score={score}
             streak={streak}
-            showCategorySelector={showCategorySelector}
+            showCategorySelector={showCategorySelector || giveMeTheRoom}
             openLoginOverlay={() => setLoginOverlayOpen(true)}
             openProfileOverlay={() => setProfileOverlayOpen(true)}
           />
         </div>
 
-        {answers.length === 0 && !showCategorySelector && (
+        {answers.length === 0 && !showCategorySelector && !giveMeTheRoom && (
           <div className='pointer-events-none absolute left-0 top-0 grid h-full w-full place-items-center'>
             <QuestionDisplay
               category={category}

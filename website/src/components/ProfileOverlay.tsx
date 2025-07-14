@@ -1,6 +1,7 @@
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
 import Overlay from './Overlay';
+import { DemoState, useDemoContext } from '@/context/DemoContext';
 
 export default function ProfileOverlay({
   closeProfileOverlay,
@@ -12,6 +13,7 @@ export default function ProfileOverlay({
   score: number;
 }) {
   const { user, refreshUser } = useAuth();
+  const { demoState } = useDemoContext();
 
   const [loading, setLoading] = useState(true);
   const [userRanking, setUserRanking] = useState<number | null>(null);
@@ -82,7 +84,7 @@ export default function ProfileOverlay({
             <div className='items-center text-[12px] font-semibold text-gray-500 md:text-base'>
               Rank
               <p className='text-lg font-bold text-base-text-color'>
-                {!loading ? `#${userRanking}` : '--'}
+                {!loading ? `#${userRanking || ' N/A'}` : '--'}
               </p>
             </div>
           </div>
@@ -96,13 +98,20 @@ export default function ProfileOverlay({
             <div className='items-center text-[12px] font-semibold text-gray-500 md:text-base'>
               Score
               <p className='text-lg font-bold text-base-text-color'>
-                {!loading ? user?.startingScore || 0 : '--'}
+                {demoState === DemoState.Normal
+                  ? !loading
+                    ? user?.startingScore || 0
+                    : '--'
+                  : score}
               </p>
             </div>
           </div>
         </div>
 
-        <a href='/auth/logout' className='mt-5 w-fit font-bold text-red-500'>
+        <a
+          href={demoState === DemoState.Normal ? '/auth/logout' : '#'}
+          className='mt-5 w-fit font-bold text-red-500'
+        >
           Logout
         </a>
       </div>

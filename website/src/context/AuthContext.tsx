@@ -5,6 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { DemoState, useDemoContext } from './DemoContext';
 
 type authenticatedState = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -45,9 +46,15 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const [authenticatedState, setAuthenticatedState] = useState<
     'loading' | 'authenticated' | 'unauthenticated'
   >('loading');
+  const { demoState } = useDemoContext();
+
   const [user, setUser] = useState<User | null>(null);
 
   const fetchUser = useCallback(async () => {
+    if (demoState !== DemoState.Normal && demoState !== DemoState.Asking) {
+      return;
+    }
+
     try {
       const response = await fetch(`/auth/user`);
       if (!response.ok) {
@@ -69,11 +76,30 @@ export default function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       setAuthenticatedState('unauthenticated');
     }
-  }, []);
+  }, [demoState]);
 
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
+
+  useEffect(() => {
+    if (demoState !== DemoState.Normal && demoState !== DemoState.Asking) {
+      setUser({
+        id: 'demo',
+        username: 'Demo User',
+        email: '',
+        maxStreak: 3,
+        startingScore: 0,
+        avatarUrl: '/images/demo.jpg',
+        startingStreak: 0,
+      });
+      setAuthenticatedState('authenticated');
+    } else {
+      if (user?.id === 'demo') {
+        window.location.reload();
+      }
+    }
+  }, [demoState]);
 
   return (
     <AuthContext.Provider
