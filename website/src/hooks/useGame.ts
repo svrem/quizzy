@@ -201,7 +201,7 @@ export function useGame() {
     switch (demoState) {
       case DemoState.CategoryExplainer: {
         setExplainer(
-          'At the start of the game, you can choose a category. Each category has 10 questions, and after that you can vote for a new category. This is a multiplayer game, so the category with the most votes is selected. This demo selects a category for you, but in the normal game you can choose yourself.',
+          'At the start of the game, you can choose a category. For that category, 10 questions are shown. Quizzy is a multiplayer game, so the category with the most votes is selected. This demo selects a category for you, but in the normal game you can choose yourself.',
         );
         break;
       }

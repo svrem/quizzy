@@ -47,7 +47,7 @@ function GamePage() {
   return (
     <>
       <div
-        className='relative left-0 right-0 mx-auto grid h-full w-full max-w-[100rem]'
+        className='relative left-0 right-0 mx-auto grid h-full w-full max-w-[70rem]'
         style={{
           gridTemplateRows: 'repeat(17, minmax(0, 1fr))',
         }}
