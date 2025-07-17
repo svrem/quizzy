@@ -6,6 +6,7 @@ A continuous quiz game made with GoLang and React.
 - Questions
 - Score and Streak
 - Protocol
+- TimeSync
 - User authentication
 - PoW (Proof of Work) for anti-spam
 - Docker CI
@@ -38,6 +39,9 @@ Client - Server:
 
 <- CategorySelection (Containing the categories for the next round)
 -> CategorySelection (The user selects the categories for the next round)
+
+### TimeSync
+I noticed an issue where sometimes the users' clocks were not in sync. Their system clocks would be a few seconds off, which caused the game timer to show an incorrect time. To solve this, I implemented a time synchronization mechanism. The server sends the current time to the client when the game starts. The client then calculates the difference between the server time and the client time. This difference is then used to adjust the game timer on the client side. 
 
 ### User Authentication
 The authentication is done using OAuth2. The users can log in using their Google or Discord accounts. After the user authenticates, a JWT token is generated and sent to the client. The client stores the token in the cookies. The server can then verify the token and authenticate the user, linking their account to the current session. 
