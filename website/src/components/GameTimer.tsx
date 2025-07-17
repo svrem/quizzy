@@ -14,7 +14,7 @@ export default function GameTimer({ timerEndTime, duration }: GameTimerProps) {
   const [timerCountdown, setTimerCountdown] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!timerEndTime || !timeOffset) return;
+    if (!timerEndTime || timeOffset === null) return;
 
     setTimerCountdown(
       Math.floor((timerEndTime - new Date().getTime() - timeOffset) / 1000),
