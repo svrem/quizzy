@@ -2,12 +2,10 @@ package game
 
 import (
 	"time"
-
-	"github.com/svrem/quizzy/internal/protocol"
 )
 
 type Game struct {
-	Listen chan *protocol.GameEvent
+	Broadcaster *Broadcaster
 
 	CurrentQuestion *Question
 	QuestionVotes   [4]int
@@ -43,7 +41,7 @@ func (g *Game) Start() {
 		g.CategoryVotes = [3]int{0, 0, 0}
 
 		g.CategorySelectionDeadline = time.Now().Add(CategorySelectionDuration * time.Second).UnixMilli()
-		g.Listen <- g.GenerateCategorySelectionMessage()
+		g.Broadcaster.broadcast <- g.GenerateCategorySelectionMessage()
 
 		time.Sleep(CategorySelectionDuration * time.Second)
 
@@ -57,7 +55,7 @@ func (g *Game) Start() {
 			}
 		}
 
-		g.Listen <- g.GenerateCategoryVotesMessage()
+		g.Broadcaster.broadcast <- g.GenerateCategoryVotesMessage()
 
 		time.Sleep(ShowAnswerDuration * time.Second)
 		g.SelectedCategory = g.SelectedCategories[maxCategoryIndex]
@@ -86,18 +84,18 @@ func (g *Game) PlayQuestions() {
 		g.QuestionPreviewDeadline = time.Now().Add(QuestionDuration * time.Second).UnixMilli()
 
 		// Start the game with question
-		g.Listen <- g.GenerateQuestionMessage()
+		g.Broadcaster.broadcast <- g.GenerateQuestionMessage()
 
 		time.Sleep(QuestionDuration * time.Second)
 
 		g.QuestionSubmissionDeadline = time.Now().Add(AnswerDuration * time.Second).UnixMilli()
 		// Start answer phase
-		g.Listen <- g.GenerateAnswerPhaseMessage()
+		g.Broadcaster.broadcast <- g.GenerateAnswerPhaseMessage()
 
 		time.Sleep(AnswerDuration * time.Second)
 
 		// Show correct answer
-		g.Listen <- g.GenerateShowAnswerMessage()
+		g.Broadcaster.broadcast <- g.GenerateShowAnswerMessage()
 
 		time.Sleep(ShowAnswerDuration * time.Second)
 
@@ -106,7 +104,10 @@ func (g *Game) PlayQuestions() {
 }
 
 func NewGame() *Game {
+	broadcaster := NewBroadcaster()
+	go broadcaster.run()
+
 	return &Game{
-		Listen: make(chan *protocol.GameEvent),
+		Broadcaster: broadcaster,
 	}
 }

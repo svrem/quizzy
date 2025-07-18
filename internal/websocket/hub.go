@@ -102,20 +102,29 @@ type Hub struct {
 
 	// Unregister requests from clients.
 	unregister chan *Client
+
+	// Current game instance.
+	currentGame *game.Game
 }
 
-func NewHub() *Hub {
+func NewHub(currentGame *game.Game) *Hub {
 	return &Hub{
 		register:      make(chan *Client),
 		unregister:    make(chan *Client),
 		handleMessage: make(chan Message),
 		clients:       make(map[*Client]bool),
+		currentGame:   currentGame,
 	}
 }
 
 func (h *Hub) Run() {
-	currentGame := game.NewGame()
-	go currentGame.Start()
+	gameChan := make(chan *protocol.GameEvent)
+	h.currentGame.Broadcaster.Register <- gameChan
+
+	defer func() {
+		h.currentGame.Broadcaster.Unregister <- gameChan
+		close(gameChan)
+	}()
 
 	for {
 		select {
@@ -136,32 +145,32 @@ func (h *Hub) Run() {
 
 			switch userEvent.Type {
 			case protocol.UserEventType_HELLO:
-				welcomeUser(message.Client, currentGame)
+				welcomeUser(message.Client, h.currentGame)
 			case protocol.UserEventType_SELECT_ANSWER:
 
 				answerIndex := userEvent.GetSelectAnswer().AnswerIndex
 
 				if message.Client.selectedAnswer != -1 {
-					currentGame.QuestionVotes[message.Client.selectedAnswer]--
+					h.currentGame.QuestionVotes[message.Client.selectedAnswer]--
 				}
 
 				message.Client.selectedAnswer = answerIndex
-				currentGame.QuestionVotes[answerIndex]++
+				h.currentGame.QuestionVotes[answerIndex]++
 			case protocol.UserEventType_SELECT_CATEGORY:
 
 				categoryIndex := userEvent.GetSelectCategory().CategoryIndex
 
 				if message.Client.selectedCategory != -1 {
-					currentGame.CategoryVotes[message.Client.selectedCategory]--
+					h.currentGame.CategoryVotes[message.Client.selectedCategory]--
 				}
 
 				message.Client.selectedCategory = categoryIndex
-				currentGame.CategoryVotes[categoryIndex]++
+				h.currentGame.CategoryVotes[categoryIndex]++
 			default:
 				println("Unknown message type:", userEvent.Type)
 			}
 
-		case event := <-currentGame.Listen:
+		case event := <-gameChan:
 			eventStr, err := proto.Marshal(event)
 			if err != nil {
 				println("Error marshalling event:", err)
@@ -192,7 +201,7 @@ func (h *Hub) Run() {
 							continue
 						}
 
-						if client.selectedAnswer == currentGame.CurrentQuestion.Correct {
+						if client.selectedAnswer == h.currentGame.CurrentQuestion.Correct {
 							client.user.Score += int(math.Round(math.Pow(game.BaseScoreIncrement, 1+game.ScoreExponentIncrement*float64(client.user.Streak))))
 							client.user.Streak++
 

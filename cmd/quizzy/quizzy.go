@@ -7,7 +7,9 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/svrem/quizzy/internal/db"
+	"github.com/svrem/quizzy/internal/game"
 	"github.com/svrem/quizzy/internal/routes"
+	"github.com/svrem/quizzy/internal/socket"
 	"github.com/svrem/quizzy/internal/websocket"
 )
 
@@ -25,8 +27,14 @@ func main() {
 
 	router := routes.NewRouter()
 
-	hub := websocket.NewHub()
+	currentGame := game.NewGame()
+	go currentGame.Start()
+
+	hub := websocket.NewHub(currentGame)
 	go hub.Run()
+
+	socketServer := socket.NewSocket(currentGame)
+	go socketServer.Run()
 
 	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		websocket.ServeWs(hub, w, r)
