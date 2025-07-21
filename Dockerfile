@@ -9,9 +9,11 @@ COPY . .
 
 RUN apk add --no-cache build-base curl zip
 
-RUN curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v31.1/protoc-31.1-linux-x86_64.zip && \
-    unzip protoc-31.1-linux-x86_64.zip -d /usr/local && \
-    rm protoc-31.1-linux-x86_64.zip
+ARG TARGETARCH
+RUN curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v26.1/protoc-26.1-linux-${TARGETARCH}.zip \
+  && unzip protoc-26.1-linux-${TARGETARCH}.zip -d /usr/local \
+  && rm protoc-26.1-linux-${TARGETARCH}.zip
+
 
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
