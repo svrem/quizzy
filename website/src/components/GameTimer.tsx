@@ -1,7 +1,7 @@
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import { useEffect, useState } from 'react';
 import 'react-circular-progressbar/dist/styles.css';
-import { useTimeSync } from '@/hooks/uesTimeSync';
+import { useTimeSync } from '@/hooks/useTimeSync';
 
 type GameTimerProps = {
   timerEndTime: number | null;

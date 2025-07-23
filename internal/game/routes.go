@@ -2,10 +2,10 @@ package game
 
 import (
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/svrem/quizzy/internal/auth"
 	"github.com/svrem/quizzy/internal/utils"
 )
 
@@ -21,12 +21,6 @@ type SessionCodeClaims struct {
 func HandleNewChallengeCode(w http.ResponseWriter, r *http.Request) {
 	state := utils.GenerateRandomCode()
 
-	secretKey := os.Getenv("SECRET_KEY")
-	if secretKey == "" {
-		http.Error(w, "SECRET_KEY environment variable is not set", http.StatusInternalServerError)
-		return
-	}
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, SessionCodeClaims{
 		Challenge: state,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -37,7 +31,7 @@ func HandleNewChallengeCode(w http.ResponseWriter, r *http.Request) {
 		},
 	})
 
-	tokenString, err := token.SignedString([]byte(secretKey))
+	tokenString, err := auth.SignToken(token)
 	if err != nil {
 		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 		return

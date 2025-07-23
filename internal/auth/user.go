@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"time"
 
@@ -19,11 +18,6 @@ type UserTokenClaims struct {
 }
 
 func generateBearerToken(user *db.User) (string, error) {
-	secretKey := os.Getenv("SECRET_KEY")
-	if secretKey == "" {
-		return "", errors.New("SECRET_KEY environment variable is not set")
-	}
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, UserTokenClaims{
 		Sub: user.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -34,7 +28,7 @@ func generateBearerToken(user *db.User) (string, error) {
 		},
 	})
 
-	tokenString, err := token.SignedString([]byte(secretKey))
+	tokenString, err := SignToken(token)
 	if err != nil {
 		return "", err
 	}
@@ -59,11 +53,6 @@ func generateUserToken(user db.User) (string, error) {
 }
 
 func GetUserFromToken(tokenString string) (*db.User, error) {
-	secretKey := os.Getenv("SECRET_KEY")
-	if secretKey == "" {
-		return nil, errors.New("SECRET_KEY environment variable is not set")
-	}
-
 	token, err := jwt.ParseWithClaims(tokenString, &UserTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secretKey), nil
 	})
@@ -128,37 +117,4 @@ func LogoutHandler(res http.ResponseWriter, req *http.Request) {
 	})
 
 	http.Redirect(res, req, "/", http.StatusSeeOther)
-}
-
-func GetUserDetailsHandler(res http.ResponseWriter, req *http.Request) {
-	tokenCookie, err := req.Cookie("token")
-	if err != nil {
-		http.Error(res, "Token cookie not found", http.StatusUnauthorized)
-		return
-	}
-
-	user, err := GetUserFromToken(tokenCookie.Value)
-
-	if err != nil {
-		http.Error(res, "Invalid token: "+err.Error(), http.StatusUnauthorized)
-		return
-	}
-
-	ranking, err := db.GetUserRanking(user)
-	if err != nil {
-		http.Error(res, "Failed to get user ranking: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	res.Header().Set("Content-Type", "application/json")
-	res.WriteHeader(http.StatusOK)
-
-	response := map[string]int{
-		"ranking": ranking,
-		"level":   user.Score / 100,
-	}
-	if err := json.NewEncoder(res).Encode(response); err != nil {
-		http.Error(res, "Failed to encode response: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
 }

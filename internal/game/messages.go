@@ -134,3 +134,14 @@ func (g *Game) GenerateCategoryVotesMessage() *protocol.GameEvent {
 
 	return event
 }
+
+func (g *Game) GenerateLeaderboardMessage(leaderboard *protocol.LeaderboardData) *protocol.GameEvent {
+	event := &protocol.GameEvent{
+		Type: protocol.GameEventType_SHOW_LEADERBOARD,
+		EventData: &protocol.GameEvent_ShowLeaderboard{
+			ShowLeaderboard: leaderboard,
+		},
+	}
+
+	return event
+}

@@ -3,6 +3,7 @@ import '@/App.css';
 import AnswersDisplay from '@/components/AnswersDisplay';
 import CategorySelector from '@/components/CategorySelector';
 import GameTimer from '@/components/GameTimer';
+import Leaderboard from '@/components/Leaderboard';
 import LoginOverlay from '@/components/LoginOverlay';
 import ProfileOverlay from '@/components/ProfileOverlay';
 import QuestionDisplay from '@/components/QuestionDisplay';
@@ -22,8 +23,9 @@ function GamePage() {
     selectedCategory,
     selectedOptionRef,
     answerPercentages,
-    categoryPossiblities,
+    categoryPossibilities,
     timerEndTime,
+    rankedUsers,
     duration,
     score,
     streak,
@@ -35,7 +37,8 @@ function GamePage() {
   const [loginOverlayOpen, setLoginOverlayOpen] = useState(false);
   const [profileOverlayOpen, setProfileOverlayOpen] = useState(false);
 
-  const showCategorySelector = categoryPossiblities !== null;
+  const fullPageContent =
+    categoryPossibilities !== null || rankedUsers.length > 0;
 
   return (
     <>
@@ -55,7 +58,7 @@ function GamePage() {
           <GameTimer timerEndTime={timerEndTime} duration={duration} />
         </div>
 
-        {!showCategorySelector && (
+        {!fullPageContent && (
           <div
             style={{ opacity: answers.length > 0 ? 1 : 0 }}
             className='row-span-5 flex flex-grow flex-col items-center justify-center'
@@ -68,24 +71,26 @@ function GamePage() {
           </div>
         )}
 
-        {showCategorySelector && (
+        {categoryPossibilities && (
           <CategorySelector
-            possibleCategories={categoryPossiblities}
+            possibleCategories={categoryPossibilities}
             setSelectedCategory={setSelectedCategory}
             votePercentages={votePercentages}
             selectedCategory={selectedCategory}
           />
         )}
 
+        {rankedUsers.length > 0 && <Leaderboard rankedUsers={rankedUsers} />}
+
         <div
           className={cn(
             'answer-grid grid w-full',
-            showCategorySelector
+            fullPageContent
               ? 'row-span-2 grid-rows-1'
               : 'row-span-10 grid-rows-5',
           )}
         >
-          {!showCategorySelector && (
+          {!fullPageContent && (
             <AnswersDisplay
               answers={answers}
               correctAnswerIndex={correctAnswerIndex}
@@ -99,13 +104,13 @@ function GamePage() {
           <UserStatsDisplay
             score={score}
             streak={streak}
-            showCategorySelector={showCategorySelector}
+            showCategorySelector={fullPageContent}
             openLoginOverlay={() => setLoginOverlayOpen(true)}
             openProfileOverlay={() => setProfileOverlayOpen(true)}
           />
         </div>
 
-        {answers.length === 0 && !showCategorySelector && (
+        {answers.length === 0 && !fullPageContent && (
           <div className='pointer-events-none absolute left-0 top-0 grid h-full w-full place-items-center'>
             <QuestionDisplay
               category={category}

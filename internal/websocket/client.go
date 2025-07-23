@@ -51,6 +51,9 @@ type Client struct {
 	// Buffered channel of outbound messages.
 	send chan []byte
 
+	// Last message time to prevent spam
+	lastMessage time.Time
+
 	// User data
 	user             *db.User
 	selectedAnswer   int32
@@ -78,6 +81,14 @@ func (c *Client) readPump() {
 			}
 			break
 		}
+
+		if time.Since(c.lastMessage) < time.Millisecond*100 {
+			// Drop message or disconnect client
+			log.Printf("Client %s sent messages too quickly, dropping message", c.user.Username)
+			continue
+		}
+		c.lastMessage = time.Now()
+
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		var messageObj = Message{
 			Client: c,

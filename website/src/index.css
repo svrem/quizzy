@@ -42,6 +42,13 @@ code {
   --theme-accent-color: 45, 100%, 50%;
   --base-text-color: hsl(60, 30%, 96.08%);
 
+  --first-winner-background-from: 50.6, 100%, 50%;
+  --first-winner-background-to: 50.6, 100%, 40%;
+  --second-winner-background-from: 0, 0%, 50%;
+  --second-winner-background-to: 0, 0%, 40%;
+  --third-winner-background-from: 29.8, 60.8%, 50%;
+  --third-winner-background-to: 29.8, 60.8%, 40%;
+
   --answer-button-inactive: hsl(249.78, 61.33%, 29.41%);
   --answer-button-inactive-shadow: hsl(249.78, 61.33%, 19.41%);
   --answer-button-hover: hsl(249.78, 61.33%, 39.41%);
@@ -56,5 +63,6 @@ code {
   --answer-incorrect-percentage: hsl(345, 75%, 50%);
   --answer-incorrect-shadow: hsl(345, 75%, 30%);
 
+  --secondary-accent: 255.6, 64%, 40%;
   --secondary-background-color: hsl(255.6, 64%, 20%);
 }

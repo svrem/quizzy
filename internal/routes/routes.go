@@ -9,6 +9,7 @@ import (
 
 	"github.com/svrem/quizzy/internal/auth"
 	"github.com/svrem/quizzy/internal/game"
+	"github.com/svrem/quizzy/internal/users"
 )
 
 func NewRouter() *http.ServeMux {
@@ -18,6 +19,7 @@ func NewRouter() *http.ServeMux {
 
 	auth.RegisterRoutes(mux)
 	game.RegisterRoutes(mux)
+	users.RegisterRoutes(mux)
 
 	mux.HandleFunc("/api/time", timeSyncHandler)
 

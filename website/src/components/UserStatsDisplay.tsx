@@ -45,21 +45,21 @@ function ScoreDisplay({ score }: { score: number }) {
   const { authenticatedState } = useAuth();
 
   return (
-    <div className='flex flex-col items-center justify-center p-1'>
+    <div className='flex flex-col items-center justify-center'>
       <div className='flex items-center'>
         <img
           src='/icons/score.svg'
           alt='Score Icon'
-          className='mx-1 h-6 w-6 md:h-10 md:w-10'
+          className='mx-1 h-[3dvh] w-[3dvh]'
         />
         {authenticatedState !== 'loading' && (
           <SlotCounter
             value={scoreFormat.format(score)}
-            numberSlotClassName='text-xl font-bold md:text-4xl'
+            numberSlotClassName='text-[3dvh] font-bold'
           />
         )}
       </div>
-      <p className='text-sm font-semibold text-gray-400 md:text-base'>Score</p>
+      <p className='text-[1.5dvh] font-semibold text-gray-400'>Score</p>
     </div>
   );
 }
@@ -68,21 +68,21 @@ function StreakDisplay({ streak }: { streak: number }) {
   const { authenticatedState } = useAuth();
 
   return (
-    <div className='flex flex-col items-center justify-center p-1'>
+    <div className='flex flex-col items-center justify-center'>
       <div className='flex items-center'>
         <img
           src='/icons/streak.svg'
           alt='Streaks Icon'
-          className='h-6 w-6 md:h-10 md:w-10'
+          className='h-[3dvh] w-[3dvh]'
         />
         {authenticatedState !== 'loading' && (
           <SlotCounter
             value={scoreFormat.format(streak)}
-            numberSlotClassName='text-xl font-bold md:text-4xl'
+            numberSlotClassName='text-[3dvh] font-bold'
           />
         )}
       </div>
-      <p className='text-sm font-semibold text-gray-400 md:text-base'>Streak</p>
+      <p className='text-[1.5dvh] font-semibold text-gray-400'>Streak</p>
     </div>
   );
 }
@@ -97,7 +97,7 @@ function UserAvatar({
   const { authenticatedState, user } = useAuth();
 
   return (
-    <div className='grid place-content-center p-1'>
+    <div className='grid place-content-center'>
       <button
         onClick={
           authenticatedState === 'unauthenticated'
@@ -105,7 +105,7 @@ function UserAvatar({
             : openProfileOverlay
         }
         className={cn(
-          'relative aspect-square h-10 w-10 rounded-full md:h-16 md:w-16',
+          'relative h-[5.5dvh] w-[5.5dvh] rounded-full',
           authenticatedState === 'loading'
             ? 'animate-pulse bg-gray-700'
             : 'bg-theme-accent-color',

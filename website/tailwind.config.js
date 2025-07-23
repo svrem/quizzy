@@ -4,11 +4,22 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'theme-accent-color': 'hsl(var(--theme-accent-color))',
+        'theme-accent-color': 'hsla(var(--theme-accent-color))',
+        'first-winner-background-from':
+          'hsla(var(--first-winner-background-from))',
+        'first-winner-background-to': 'hsla(var(--first-winner-background-to))',
+        'second-winner-background-from':
+          'hsla(var(--second-winner-background-from))',
+        'second-winner-background-to':
+          'hsla(var(--second-winner-background-to))',
+        'third-winner-background-from':
+          'hsla(var(--third-winner-background-from))',
+        'third-winner-background-to': 'hsla(var(--third-winner-background-to))',
         'base-text-color': 'var(--base-text-color)',
         'answer-button-inactive': 'var(--answer-button-inactive)',
         'answer-button-active': 'var(--answer-button-active)',
         'answer-button-hover': 'var(--answer-button-hover)',
+        'secondary-accent': 'hsla(var(--secondary-accent))',
         'secondary-background-color': 'var(--secondary-background-color)',
       },
       animation: {

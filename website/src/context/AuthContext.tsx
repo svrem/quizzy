@@ -49,8 +49,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   const fetchUser = useCallback(async () => {
     try {
-      const response = await fetch(`/auth/user`);
-      if (!response.ok) {
+      const response = await fetch(`/auth/user`).catch((error) => null);
+      if (!response || !response.ok) {
         setAuthenticatedState('unauthenticated');
         return;
       }

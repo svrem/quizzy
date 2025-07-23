@@ -1,5 +1,13 @@
 package db
 
+type RankedUser struct {
+	ID             string `json:"id"`
+	Username       string `json:"username"`
+	ProfilePicture string `json:"profile_picture"`
+	Score          int    `json:"score"`
+	Ranking        int    `json:"ranking"`
+}
+
 func GetUserByProviderAndID(provider, providerID string) *User {
 	var user User
 	if err := db.Where("provider = ? AND provider_id = ?", provider, providerID).First(&user).Error; err != nil {
@@ -41,12 +49,28 @@ func UpdateManyUsers(users []*User) error {
 	return nil
 }
 
+var RankedUsers []*RankedUser
+
 func GetUserRanking(user *User) (int, error) {
-	var count int64
-	if err := db.Model(&User{}).Where("score > ?", user.Score).Count(&count).Error; err != nil {
-		return 0, err
+	for _, rankedUser := range RankedUsers {
+		if rankedUser.ID == user.ID {
+			return rankedUser.Ranking, nil
+		}
+	}
+	return 0, nil
+}
+
+func FetchUserRankings() error {
+	result := db.Raw(`
+		SELECT id, username, profile_picture, score,
+		DENSE_RANK() OVER (ORDER BY score DESC, created_at ASC) AS ranking
+		FROM users
+		ORDER BY score DESC, created_at ASC
+	`).Scan(&RankedUsers)
+
+	if result.Error != nil {
+		return result.Error
 	}
 
-	ranking := int(count) + 1
-	return ranking, nil
+	return nil
 }

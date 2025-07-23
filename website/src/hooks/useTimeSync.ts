@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 export function useTimeSync() {
   const [serverTime, setServerTime] = useState<number | null>(null);
-  const [clientTime, setClientTime] = useState<number | null>(null);
   const [timeOffset, setTimeOffset] = useState<number | null>(null);
 
   useEffect(() => {
@@ -22,7 +21,6 @@ export function useTimeSync() {
   useEffect(() => {
     if (serverTime !== null) {
       const currentTime = Date.now();
-      setClientTime(currentTime);
       setTimeOffset(serverTime - currentTime);
     }
   }, [serverTime]);

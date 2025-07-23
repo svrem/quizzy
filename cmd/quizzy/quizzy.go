@@ -8,6 +8,7 @@ import (
 
 	"github.com/svrem/quizzy/internal/db"
 	"github.com/svrem/quizzy/internal/game"
+	"github.com/svrem/quizzy/internal/middleware"
 	"github.com/svrem/quizzy/internal/routes"
 	"github.com/svrem/quizzy/internal/socket"
 	"github.com/svrem/quizzy/internal/websocket"
@@ -36,9 +37,9 @@ func main() {
 	socketServer := socket.NewSocket(currentGame)
 	go socketServer.Run()
 
-	router.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+	router.Handle("/ws", middleware.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		websocket.ServeWs(hub, w, r)
-	})
+	})))
 
 	println("Starting server on :8080")
 	// Start the server

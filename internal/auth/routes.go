@@ -12,5 +12,4 @@ func RegisterRoutes(router *http.ServeMux) {
 	router.HandleFunc("/auth/user", GetUserFromTokenHandler)
 	router.HandleFunc("/auth/logout", LogoutHandler)
 
-	router.HandleFunc("/api/user/details", GetUserDetailsHandler)
 }

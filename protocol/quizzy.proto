@@ -11,6 +11,7 @@ enum GameEventType {
   UPDATE_USER_STATS = 3;
   CATEGORY_SELECTION = 4;
   CATEGORY_VOTES = 5;
+  SHOW_LEADERBOARD = 6;
 }
 
 // Main GameEvent message
@@ -24,9 +25,21 @@ message GameEvent {
     CorrectAnswerData show_answer = 5;
     CategorySelectionData category_selection = 6;
     CategoryVotesData category_votes = 7;
-    // Optionally add user stats, etc.
+    LeaderboardData show_leaderboard = 8;
   }
 }
+
+// Represents a user in the leaderboard
+message RankedUser {
+  string id = 1;
+  string username = 2;
+  string profile_picture = 3;
+  int32 score = 4;
+  int32 ranking = 5;
+}
+
+// Represent the leaderboard data
+message LeaderboardData { repeated RankedUser users = 1; }
 
 // Basic question structure for use during gameplay
 message QuestionData {

@@ -2,6 +2,8 @@ package game
 
 import (
 	"time"
+
+	"github.com/svrem/quizzy/internal/protocol"
 )
 
 type Game struct {
@@ -14,6 +16,8 @@ type Game struct {
 	QuestionSubmissionDeadline int64
 
 	CategorySelectionDeadline int64
+
+	LeaderboardDeadline int64
 
 	SelectedCategory   string
 	SelectedCategories []string
@@ -30,53 +34,65 @@ func (g *Game) Start() {
 	defer CloseQuestionDB()
 
 	for {
-		selectedCategories, err := pickThreeRandomCategories()
+		g.Broadcaster.broadcast <- g.GenerateLeaderboardMessage(
+			&protocol.LeaderboardData{
+				Users: make([]*protocol.RankedUser, 0, 10),
+			},
+		)
 
+		g.LeaderboardDeadline = time.Now().Add(LeaderboardDuration * time.Second).UnixMilli()
+		time.Sleep(LeaderboardDuration * time.Second)
+
+		g.selectCategory()
+
+		questions, err := getQuestions(g.SelectedCategory, AmountOfQuestionsPerCategory)
 		if err != nil {
-			println("Error picking categories:", err.Error())
+			println("Error fetching questions:", err.Error())
 			return
 		}
 
-		g.SelectedCategories = selectedCategories
-		g.CategoryVotes = [3]int{0, 0, 0}
-
-		g.CategorySelectionDeadline = time.Now().Add(CategorySelectionDuration * time.Second).UnixMilli()
-		g.Broadcaster.broadcast <- g.GenerateCategorySelectionMessage()
-
-		time.Sleep(CategorySelectionDuration * time.Second)
-
-		// get the max category vote and set the selected category
-		maxVotes := -1
-		maxCategoryIndex := -1
-		for i, votes := range g.CategoryVotes {
-			if votes > maxVotes {
-				maxVotes = votes
-				maxCategoryIndex = i
-			}
-		}
-
-		g.Broadcaster.broadcast <- g.GenerateCategoryVotesMessage()
-
-		time.Sleep(ShowAnswerDuration * time.Second)
-		g.SelectedCategory = g.SelectedCategories[maxCategoryIndex]
-		g.SelectedCategories = make([]string, 0, 3)
-
-		g.PlayQuestions()
+		g.playQuestions(questions)
 
 	}
-
 }
 
-func (g *Game) PlayQuestions() {
+func (g *Game) selectCategory() {
+	selectedCategories, err := pickThreeRandomCategories()
+
+	if err != nil {
+		println("Error picking categories:", err.Error())
+		return
+	}
+
+	g.SelectedCategories = selectedCategories
+	g.CategoryVotes = [3]int{0, 0, 0}
+
+	g.CategorySelectionDeadline = time.Now().Add(CategorySelectionDuration * time.Second).UnixMilli()
+	g.Broadcaster.broadcast <- g.GenerateCategorySelectionMessage()
+
+	time.Sleep(CategorySelectionDuration * time.Second)
+
+	// get the max category vote and set the selected category
+	maxVotes := -1
+	maxCategoryIndex := -1
+	for i, votes := range g.CategoryVotes {
+		if votes > maxVotes {
+			maxVotes = votes
+			maxCategoryIndex = i
+		}
+	}
+
+	g.Broadcaster.broadcast <- g.GenerateCategoryVotesMessage()
+
+	time.Sleep(ShowAnswerDuration * time.Second)
+	g.SelectedCategory = g.SelectedCategories[maxCategoryIndex]
+	g.SelectedCategories = make([]string, 0, 3)
+}
+
+func (g *Game) playQuestions(questions []Question) {
 	questionIndex := 0
 
-	for questionIndex < AmountOfQuestionsPerCategory {
-		question, err := getQuestion(g.SelectedCategory)
-
-		if err != nil {
-			println("Error fetching question:", err.Error())
-			return
-		}
+	for _, question := range questions {
 
 		// Set up the current question and end time
 		g.CurrentQuestion = &question

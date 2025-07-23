@@ -6,35 +6,36 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/svrem/quizzy/internal/auth"
 	"github.com/svrem/quizzy/internal/db"
+	"github.com/svrem/quizzy/internal/middleware"
 )
+
+func handlePoW(challengeToken string, nonceStr string) bool {
+	if os.Getenv("DISABLE_POW") == "true" {
+		return true // PoW is disabled, allow all connections
+	}
+
+	if challengeToken == "" || nonceStr == "" {
+		return false
+	}
+
+	// Convert nonce to int64
+	nonce, err := strconv.ParseInt(nonceStr, 10, 64)
+	if err != nil {
+		return false
+	}
+
+	return verifyChallenge(challengeToken, nonce)
+}
 
 // serveWs handles websocket requests from the peer.
 func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
-	if os.Getenv("DISABLE_POW") != "true" {
-		// Check for challenge token and nonce in query parameters
-		challengeToken := r.URL.Query().Get("challenge_token")
-		nonceStr := r.URL.Query().Get("nonce")
-
-		if challengeToken == "" || nonceStr == "" {
-			http.Error(w, "Challenge token and nonce are required", http.StatusBadRequest)
-			return
-		}
-
-		// Convert nonce to int64
-		nonce, err := strconv.ParseInt(nonceStr, 10, 64)
-		if err != nil {
-			http.Error(w, "Invalid nonce", http.StatusBadRequest)
-			return
-		}
-
-		// Verify the challenge
-		if !verifyChallenge(challengeToken, nonce) {
-			http.Error(w, "Invalid challenge", http.StatusUnauthorized)
-			return
-		}
+	challengeToken := r.URL.Query().Get("challenge_token")
+	nonceStr := r.URL.Query().Get("nonce")
+	if !handlePoW(challengeToken, nonceStr) {
+		http.Error(w, "Invalid challenge or nonce", http.StatusForbidden)
+		return
 	}
 
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -43,18 +44,12 @@ func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get the user token from the cookie
-	cookie, err := r.Cookie("token")
-	var user *db.User = &db.User{
-		Streak: 0,
-		Score:  0,
-	}
-	if err == nil {
-		userDB, err := auth.GetUserFromToken(cookie.Value)
-		if err == nil {
-			user = userDB
+	user, ok := r.Context().Value(middleware.UserContextKey).(*db.User)
+	if !ok || user == nil {
+		user = &db.User{
+			Streak: 0,
+			Score:  0,
 		}
-		// ser.UserGameStatsID
 	}
 
 	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), selectedAnswer: -1, selectedCategory: -1, user: user}

@@ -28,7 +28,7 @@ export function useGame() {
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number | null>(
     null,
   );
-  const [categoryPossiblities, setCategoryPossibilities] = useState<
+  const [categoryPossibilities, setCategoryPossibilities] = useState<
     string[] | null
   >(null);
   const [answerPercentages, setAnswerPercentages] = useState<number[] | null>(
@@ -36,6 +36,8 @@ export function useGame() {
   );
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [votePercentages, setVotePercentages] = useState<number[] | null>(null);
+
+  const [rankedUsers, setRankedUsers] = useState<protobuf.IRankedUser[]>([]);
 
   const { duration, resetTimer, setTimer, timerEndTime } = useTimer();
 
@@ -126,6 +128,7 @@ export function useGame() {
           setAnswers([]);
           setSelectedAnswerIndex(null);
           setCorrectAnswerIndex(null);
+          setRankedUsers([]);
           setCategoryPossibilities(
             gameEvent.categorySelection?.categories || null,
           );
@@ -168,6 +171,23 @@ export function useGame() {
 
           break;
         }
+        case protobuf.GameEventType.SHOW_LEADERBOARD: {
+          setQuestion(null);
+          setDifficulty(null);
+          setCategory(null);
+          setAnswers([]);
+          setSelectedAnswerIndex(null);
+          setCorrectAnswerIndex(null);
+          setCategoryPossibilities(null);
+          setAnswerPercentages(null);
+          setVotePercentages(null);
+          setSelectedCategory(null);
+          resetTimer();
+
+          setRankedUsers(gameEvent.showLeaderboard?.users || []);
+
+          break;
+        }
       }
     };
   }
@@ -194,8 +214,9 @@ export function useGame() {
     selectedOptionRef,
     score,
     streak,
-    categoryPossiblities,
+    categoryPossibilities,
     answerPercentages,
+    rankedUsers,
     selectedCategory,
     votePercentages,
     setSelectedAnswerIndex,
