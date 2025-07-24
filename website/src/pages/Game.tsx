@@ -6,6 +6,7 @@ import GameTimer from '@/components/GameTimer';
 import Leaderboard from '@/components/Leaderboard';
 import LoginOverlay from '@/components/LoginOverlay';
 import ProfileOverlay from '@/components/ProfileOverlay';
+import PulseLoader from '@/components/PulseLoader';
 import QuestionDisplay from '@/components/QuestionDisplay';
 import UserStatsDisplay from '@/components/UserStatsDisplay';
 import { useGame } from '@/hooks/useGame';

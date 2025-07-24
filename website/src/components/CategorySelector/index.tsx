@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import CategoryButton from './CategoryButton';
+import PulseLoader from '../PulseLoader';
 
 type CategorySelectorProps = {
   possibleCategories: string[];
@@ -38,25 +39,25 @@ export default function CategorySelector({
         gridRow: 'span 13 / span 13',
       }}
     >
+      <h2 className='m-3 text-center text-xl'>Choose a new category!</h2>
+      {imagesLoaded < 3 && (
+        <div className='flex flex-grow items-center justify-center'>
+          <PulseLoader />
+        </div>
+      )}
       {imagesLoaded >= 3 && (
-        <>
-          <h2 className='m-3 text-center text-xl'>Choose a new category!</h2>
-
-          <div className='grid w-full flex-grow grid-cols-3 gap-2 md:gap-5'>
-            {possibleCategories.map((category, i) => (
-              <CategoryButton
-                category={category}
-                index={i}
-                key={category}
-                votePercentage={
-                  votePercentages ? votePercentages[i] : undefined
-                }
-                selected={selectedCategory === i}
-                onClick={() => setSelectedCategory(i)}
-              />
-            ))}
-          </div>
-        </>
+        <div className='grid w-full flex-grow grid-cols-3 gap-2 md:gap-5'>
+          {possibleCategories.map((category, i) => (
+            <CategoryButton
+              category={category}
+              index={i}
+              key={category}
+              votePercentage={votePercentages ? votePercentages[i] : undefined}
+              selected={selectedCategory === i}
+              onClick={() => setSelectedCategory(i)}
+            />
+          ))}
+        </div>
       )}
     </div>
   );
