@@ -5,25 +5,11 @@ export function useTimeSync() {
   const [timeOffset, setTimeOffset] = useState<number | null>(null);
 
   useEffect(() => {
-    const fetchServerTime = async () => {
-      try {
-        const response = await fetch('/api/time');
-        const data = await response.text();
-        setServerTime(parseInt(data, 10));
-      } catch (error) {
-        console.error('Failed to fetch server time:', error);
-      }
-    };
+    if (!serverTime) return;
 
-    fetchServerTime();
-  }, []);
-
-  useEffect(() => {
-    if (serverTime !== null) {
-      const currentTime = Date.now();
-      setTimeOffset(serverTime - currentTime);
-    }
+    const currentTime = Date.now();
+    setTimeOffset(serverTime - currentTime);
   }, [serverTime]);
 
-  return { timeOffset };
+  return { timeOffset, setServerTime };
 }

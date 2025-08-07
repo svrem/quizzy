@@ -32,6 +32,9 @@ func (h *Hub) handleUserMessage(message Message) {
 }
 
 func (h *Hub) handleGameEvent(event *protocol.GameEvent) {
+	// inject the current server time into the event
+	event.Timestamp = time.Now().UnixMilli()
+
 	eventStr, err := proto.Marshal(event)
 	if err != nil {
 		println("Error marshalling event:", err)

@@ -21,7 +21,6 @@ export function useGameSocket() {
       newSocket.binaryType = 'arraybuffer';
 
       newSocket.onopen = () => {
-        console.log('WebSocket connection established');
         reconnectAttempts.current = 0; // Reset attempts on successful connection
       };
       newSocket.onclose = (event) => {

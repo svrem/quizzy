@@ -6,7 +6,6 @@ import GameTimer from '@/components/GameTimer';
 import Leaderboard from '@/components/Leaderboard';
 import LoginOverlay from '@/components/LoginOverlay';
 import ProfileOverlay from '@/components/ProfileOverlay';
-import PulseLoader from '@/components/PulseLoader';
 import QuestionDisplay from '@/components/QuestionDisplay';
 import UserStatsDisplay from '@/components/UserStatsDisplay';
 import { useGame } from '@/hooks/useGame';
@@ -22,6 +21,7 @@ function GamePage() {
     selectedAnswerIndex,
     correctAnswerIndex,
     selectedCategory,
+    timeOffset,
     selectedOptionRef,
     answerPercentages,
     categoryPossibilities,
@@ -56,7 +56,11 @@ function GamePage() {
             Quizzy
           </h1>
 
-          <GameTimer timerEndTime={timerEndTime} duration={duration} />
+          <GameTimer
+            timerEndTime={timerEndTime}
+            duration={duration}
+            timeOffset={timeOffset}
+          />
         </div>
 
         {!fullPageContent && (

@@ -6,11 +6,14 @@ import { useTimeSync } from '@/hooks/useTimeSync';
 type GameTimerProps = {
   timerEndTime: number | null;
   duration: number;
+  timeOffset: number | null;
 };
 
-export default function GameTimer({ timerEndTime, duration }: GameTimerProps) {
-  const { timeOffset } = useTimeSync();
-
+export default function GameTimer({
+  timerEndTime,
+  duration,
+  timeOffset,
+}: GameTimerProps) {
   const [timerCountdown, setTimerCountdown] = useState<number | null>(null);
 
   useEffect(() => {

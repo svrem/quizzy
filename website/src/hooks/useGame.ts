@@ -4,8 +4,9 @@ import { useGameSocket } from '@/hooks/useGameSocket';
 import { fireConfetti } from '@/utils/confetti';
 import { useEffect, useRef, useState } from 'react';
 
+import { useTimer } from '@/hooks/useTimer';
+import { useTimeSync } from '@/hooks/useTimeSync';
 import { quizzy as protobuf } from '@/protocol/quizzy.pb';
-import { useTimer } from './useTimer';
 
 export function useGame() {
   const { authenticatedState, user } = useAuth();
@@ -14,6 +15,8 @@ export function useGame() {
   const loseSound = useAudio(`${process.env.PUBLIC_URL}/audio/lose.mp3`);
 
   const gameSocket = useGameSocket();
+
+  const { setServerTime, timeOffset } = useTimeSync();
 
   const [streak, setStreak] = useState(0);
   const [score, setScore] = useState(0);
@@ -87,6 +90,8 @@ export function useGame() {
     gameSocket.onmessage = async (event: MessageEvent) => {
       const buffer = new Uint8Array(event.data);
       const gameEvent = protobuf.GameEvent.decode(buffer);
+
+      setServerTime(gameEvent.timestamp);
 
       switch (gameEvent.type) {
         case protobuf.GameEventType.QUESTION: {
@@ -212,6 +217,7 @@ export function useGame() {
     timerEndTime,
     duration,
     selectedOptionRef,
+    timeOffset,
     score,
     streak,
     categoryPossibilities,

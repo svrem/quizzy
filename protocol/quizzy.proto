@@ -18,14 +18,16 @@ enum GameEventType {
 message GameEvent {
   GameEventType type = 1;
 
+  int64 timestamp = 2;
+
   oneof event_data {
-    QuestionData question = 2;
-    AnswerPhaseData answer_phase = 3;
-    UpdateUserStatsData update_user_stats = 4;
-    CorrectAnswerData show_answer = 5;
-    CategorySelectionData category_selection = 6;
-    CategoryVotesData category_votes = 7;
-    LeaderboardData show_leaderboard = 8;
+    QuestionData question = 3;
+    AnswerPhaseData answer_phase = 4;
+    UpdateUserStatsData update_user_stats = 5;
+    CorrectAnswerData show_answer = 6;
+    CategorySelectionData category_selection = 7;
+    CategoryVotesData category_votes = 8;
+    LeaderboardData show_leaderboard = 9;
   }
 }
 
