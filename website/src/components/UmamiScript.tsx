@@ -1,6 +1,25 @@
+import { useEffect, useState } from 'react';
+
 export default function UmamiScript() {
-  const umamiUrl = import.meta.env.VITE_UMAMI_URL;
-  const umamiWebsiteId = import.meta.env.VITE_UMAMI_WEBSITE_ID;
+  const [loading, setLoading] = useState(true);
+
+  const [umamiUrl, setUmamiUrl] = useState<string | null>(null);
+  const [umamiWebsiteId, setUmamiWebsiteId] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadUmamiConfiguration() {
+      const response = await fetch('/api/analytics');
+      const data = await response.json();
+
+      setUmamiUrl(data.umamiUrl);
+      setUmamiWebsiteId(data.websiteId);
+      setLoading(false);
+    }
+
+    loadUmamiConfiguration();
+  }, []);
+
+  if (loading) return null;
 
   if (!umamiUrl || !umamiWebsiteId) {
     console.warn(
@@ -10,6 +29,6 @@ export default function UmamiScript() {
   }
 
   return (
-    <script defer src={umamiUrl} data-website-id={umamiWebsiteId}></script>
+    <script async src={umamiUrl} data-website-id={umamiWebsiteId}></script>
   );
 }

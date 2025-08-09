@@ -22,6 +22,7 @@ func NewRouter() *http.ServeMux {
 	users.RegisterRoutes(mux)
 
 	mux.HandleFunc("/api/time", timeSyncHandler)
+	mux.HandleFunc("/api/analytics", analyticsRouteHandler)
 
 	if isDev {
 		target, _ := url.Parse("http://localhost:3000")

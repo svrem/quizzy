@@ -6,10 +6,7 @@ interface ViteTypeOptions {
   // strictImportMetaEnv: unknown
 }
 
-interface ImportMetaEnv {
-  readonly VITE_UMAMI_URL: string;
-  readonly VITE_UMAMI_WEBSITE_ID: string;
-}
+interface ImportMetaEnv {}
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
