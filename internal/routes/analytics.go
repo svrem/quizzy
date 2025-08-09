@@ -17,8 +17,8 @@ func analyticsRouteHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	response := AnalyticsResponse{
-		UmamiUrl:  os.Getenv("VITE_ANALYTICS_URL"),
-		WebsiteId: os.Getenv("VITE_ANALYTICS_WEBSITE_ID"),
+		UmamiUrl:  os.Getenv("UMAMI_URL"),
+		WebsiteId: os.Getenv("UMAMI_WEBSITE_ID"),
 	}
 
 	json.NewEncoder(w).Encode(response)
