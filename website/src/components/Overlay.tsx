@@ -1,5 +1,6 @@
 import { cn } from '@/utils/utils';
 import { useEffect, useId, useState } from 'react';
+import CloseIcon from './icons/CloseIcon';
 
 type OverlayProps = {
   children?: React.ReactNode;
@@ -68,11 +69,7 @@ export default function Overlay({
         )}
       >
         <button onClick={onClick} className='absolute right-5 top-5'>
-          <img
-            src='/icons/close.svg'
-            alt='Close Icon'
-            className='h-6 w-6 cursor-pointer'
-          />
+          <CloseIcon className='h-6 w-6 cursor-pointer' />
         </button>
         {children}
       </div>

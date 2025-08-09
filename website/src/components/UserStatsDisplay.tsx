@@ -1,7 +1,9 @@
 import { useAuth } from '@/context/AuthContext';
-import UserIcon from '@/icons/User';
+import UserIcon from '@/components/icons/User';
 import { cn } from '@/utils/utils';
 import SlotCounter from 'react-slot-counter';
+import ScoreIcon from './icons/ScoreIcon';
+import StreakIcon from './icons/StreakIcon';
 
 const scoreFormat = new Intl.NumberFormat('en-US', {
   notation: 'compact',
@@ -47,11 +49,7 @@ function ScoreDisplay({ score }: { score: number }) {
   return (
     <div className='flex flex-col items-center justify-center'>
       <div className='flex items-center'>
-        <img
-          src='/icons/score.svg'
-          alt='Score Icon'
-          className='mx-1 h-[3dvh] w-[3dvh]'
-        />
+        <ScoreIcon className='mx-1 h-[3dvh] w-[3dvh]' />
         {authenticatedState !== 'loading' && (
           <SlotCounter
             value={scoreFormat.format(score)}
@@ -70,11 +68,7 @@ function StreakDisplay({ streak }: { streak: number }) {
   return (
     <div className='flex flex-col items-center justify-center'>
       <div className='flex items-center'>
-        <img
-          src='/icons/streak.svg'
-          alt='Streaks Icon'
-          className='h-[3dvh] w-[3dvh]'
-        />
+        <StreakIcon className='h-[3dvh] w-[3dvh]' />
         {authenticatedState !== 'loading' && (
           <SlotCounter
             value={scoreFormat.format(streak)}

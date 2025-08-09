@@ -1,5 +1,8 @@
 import Overlay from '@/components/Overlay';
 import { useState } from 'react';
+import DiscordIcon from '@/components/icons/DiscordIcon';
+import GoogleIcon from '@/components/icons/GoogleIcon';
+import LogoIcon from '@/components/icons/LogoIcon';
 
 type LoginOverlayProps = {
   overlayOpen: boolean;
@@ -18,7 +21,7 @@ export default function LoginOverlay({
       onClick={closeLoginOverlay}
       overlayOpen={overlayOpen}
     >
-      <img src='/icons/logo.svg' className='w-16' alt='' />
+      <LogoIcon className='w-16' />
       <h2 className='text-center text-2xl font-bold md:text-3xl'>
         {pageOpen === 'login' ? 'Welcome Back' : 'Welcome'}
       </h2>
@@ -36,8 +39,8 @@ export default function LoginOverlay({
       </p>
 
       <div className='flex w-full flex-col items-center gap-3'>
-        <OAuthButton icon='/icons/google.svg' provider='google' />
-        <OAuthButton icon='/icons/discord.svg' provider='discord' />
+        <OAuthButton iconComponent={GoogleIcon} provider='google' />
+        <OAuthButton iconComponent={DiscordIcon} provider='discord' />
       </div>
     </Overlay>
   );
@@ -45,20 +48,16 @@ export default function LoginOverlay({
 
 type OAuthButtonProps = {
   provider: string;
-  icon: string;
+  iconComponent: React.FC<React.SVGProps<SVGSVGElement>>;
 };
 
-function OAuthButton({ icon, provider }: OAuthButtonProps) {
+function OAuthButton({ iconComponent: Icon, provider }: OAuthButtonProps) {
   return (
     <a
       href={`/auth/login/${provider}`}
       className='secondary-display flex w-full select-none items-center justify-center gap-3 rounded-lg py-4 text-center text-sm font-bold capitalize md:py-5 md:text-xl'
     >
-      <img
-        src={icon}
-        alt={`${provider} Icon`}
-        className='inline-block h-6 w-6'
-      />
+      <Icon className='inline-block h-6 w-6' />
       {provider}
     </a>
   );

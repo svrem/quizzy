@@ -2,6 +2,8 @@ import { useAuth } from '@/context/AuthContext';
 import { quizzy } from '@/protocol/quizzy.pb';
 import { cn } from '@/utils/utils';
 import { useEffect, useState } from 'react';
+import RankIcon from './icons/RankIcon';
+import MinusIcon from './icons/MinusIcon';
 
 type LeaderboardProps = {
   rankedUsers: quizzy.IRankedUser[];
@@ -54,11 +56,33 @@ export default function Leaderboard({ rankedUsers }: LeaderboardProps) {
             }}
           >
             <div className='flex flex-col items-center gap-2'>
-              <p className='text-lg font-semibold'>#{rankedUser.ranking}</p>
-              {(rankedUser.previousRanking !== undefined ||
-                rankedUser.ranking === rankedUser.previousRanking) && (
-                <p className='text-sm text-gray-500'>-</p>
-              )}
+              <div className='flex items-center gap-1'>
+                <p className='text-lg font-semibold'>
+                  #{rankedUser.ranking ?? '-'}
+                </p>
+
+                {typeof rankedUser.ranking === 'number' &&
+                  typeof rankedUser.previousRanking === 'number' &&
+                  rankedUser.previousRanking !== rankedUser.ranking && (
+                    <RankIcon
+                      style={{
+                        transform:
+                          rankedUser.ranking! < rankedUser.previousRanking!
+                            ? 'rotate(0deg)'
+                            : 'rotate(180deg)',
+                        color:
+                          rankedUser.ranking! < rankedUser.previousRanking!
+                            ? 'hsl(121, 60%, 40%)' // up: green
+                            : 'hsl(0, 70%, 55%)', // down: red
+                      }}
+                    />
+                  )}
+                {typeof rankedUser.ranking === 'number' &&
+                  typeof rankedUser.previousRanking === 'number' &&
+                  rankedUser.previousRanking === rankedUser.ranking && (
+                    <MinusIcon style={{ color: 'gray' }} />
+                  )}
+              </div>
             </div>
 
             <div className='relative aspect-square h-full rounded-full'>

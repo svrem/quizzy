@@ -1,6 +1,9 @@
 import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
 import Overlay from './Overlay';
+import StreakIcon from './icons/StreakIcon';
+import RankIcon from './icons/RankIcon';
+import ScoreIcon from './icons/ScoreIcon';
 
 export default function ProfileOverlay({
   closeProfileOverlay,
@@ -60,11 +63,7 @@ export default function ProfileOverlay({
 
         <div className='mt-5 grid w-full grid-cols-2 gap-2 md:grid-cols-3'>
           <div className='secondary-display flex gap-1 rounded p-1'>
-            <img
-              src='/icons/streak.svg'
-              alt='Streaks Icon'
-              className='h-6 w-6 p-0.5 md:h-10 md:w-10 md:p-1'
-            />
+            <StreakIcon className='h-6 w-6 p-0.5 md:h-10 md:w-10 md:p-1' />
             <div className='items-center text-[12px] font-semibold text-gray-500 md:text-base'>
               Max Streak
               <p className='text-lg font-bold text-base-text-color'>
@@ -74,11 +73,13 @@ export default function ProfileOverlay({
           </div>
 
           <div className='secondary-display col-span-2 row-start-1 flex gap-1 rounded p-1 md:col-span-1 md:col-start-2'>
-            <img
-              src='/icons/rank.svg'
-              alt='Rank Icon'
+            <RankIcon
               className='h-6 w-6 p-0.5 md:h-10 md:w-10 md:p-1'
+              style={{
+                color: 'hsl(121, 27%, 55%)',
+              }}
             />
+
             <div className='items-center text-[12px] font-semibold text-gray-500 md:text-base'>
               Rank
               <p className='text-lg font-bold text-base-text-color'>
@@ -88,11 +89,7 @@ export default function ProfileOverlay({
           </div>
 
           <div className='secondary-display flex gap-1 rounded p-1'>
-            <img
-              src='/icons/score.svg'
-              alt='Score Icon'
-              className='h-6 w-6 p-0.5 md:h-10 md:w-10 md:p-1'
-            />
+            <ScoreIcon className='h-6 w-6 p-0.5 md:h-10 md:w-10 md:p-1' />
             <div className='items-center text-[12px] font-semibold text-gray-500 md:text-base'>
               Score
               <p className='text-lg font-bold text-base-text-color'>
