@@ -86,7 +86,7 @@ export default function Leaderboard({ rankedUsers }: LeaderboardProps) {
               </div>
             </div>
 
-            <div className='relative aspect-square h-full rounded-full'>
+            <div className='relative aspect-square h-12 w-12 rounded-full'>
               <img
                 src={rankedUser.profilePicture || ''}
                 className='h-12 w-12 rounded-full'
