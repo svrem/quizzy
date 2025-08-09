@@ -1,17 +1,20 @@
 :root {
-  --answer-button-shadow-offset: 5px;
+  --answer-button-base-shadow-offset: 5px;
 }
 
 /* MD */
 @media (min-width: 768px) {
   :root {
-    --answer-button-shadow-offset: 10px;
+    --answer-button-base-shadow-offset: 10px;
   }
 }
 
 .answer-button {
+  --answer-button-shadow-offset: var(--answer-button-base-shadow-offset);
+  --answer-button-shadow-color: var(--answer-button-inactive-shadow);
+
   box-shadow: 0 var(--answer-button-shadow-offset) 0px 0px
-    var(--answer-button-inactive-shadow);
+    var(--answer-button-shadow-color);
 
   font-size: calc(min(2dvh, 5dvw));
 
@@ -21,30 +24,23 @@
   }
 }
 
-@media (hover: hover) {
-  .answer-button:hover {
-    background-color: var(--answer-button-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 calc(var(--answer-button-shadow-offset) + 2px) 0px 0px
-      var(--answer-button-hover-shadow);
-  }
+.answer-button:hover {
+  background-color: var(--answer-button-hover);
+  --answer-button-shadow-color: var(--answer-button-hover-shadow);
 }
 
 .answer-button.selected {
-  box-shadow: 0 var(--answer-button-shadow-offset) 0px
-    var(--answer-button-active-shadow);
+  --answer-button-shadow-offset: calc(var(--answer-button-base-shadow-offset));
+  --answer-button-shadow-color: var(--answer-button-active-shadow);
   background-color: var(--answer-button-active);
 }
 
-.answer-button:active {
-  transform: translateY(var(--answer-button-shadow-offset));
-  box-shadow: 0 0px 0px 0px var(--answer-button-inactive-shadow);
-}
-
 .answer-button.correct {
+  transform: translateY(0);
   background-color: var(--answer-correct);
-  box-shadow: 0 var(--answer-button-shadow-offset) 0px 0px
-    var(--answer-correct-shadow);
+
+  --answer-button-shadow-offset: calc(var(--answer-button-base-shadow-offset));
+  --answer-button-shadow-color: var(--answer-correct-shadow);
 
   & > .progress {
     background-color: var(--answer-correct-percentage);
@@ -53,14 +49,29 @@
   --shine-opacity: 0.5;
 }
 .answer-button.incorrect {
+  transform: translateY(0);
   background-color: var(--answer-incorrect);
-  box-shadow: 0 var(--answer-button-shadow-offset) 0px 0px
-    var(--answer-incorrect-shadow);
+
+  --answer-button-shadow-offset: calc(var(--answer-button-base-shadow-offset));
+  --answer-button-shadow-color: var(--answer-incorrect-shadow);
 
   color: rgba(255, 255, 255, 0.8);
+
   & > .progress {
     background-color: var(--answer-incorrect-percentage);
   }
+}
+
+.answer-button:hover {
+  transform: translateY(-2px);
+  --answer-button-shadow-offset: calc(
+    var(--answer-button-base-shadow-offset) + 2px
+  );
+}
+
+.answer-button:active {
+  transform: translateY(var(--answer-button-base-shadow-offset));
+  --answer-button-shadow-offset: 0;
 }
 
 .save-progress-text {
