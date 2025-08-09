@@ -91,6 +91,8 @@ export function useGame() {
       const buffer = new Uint8Array(event.data);
       const gameEvent = protobuf.GameEvent.decode(buffer);
 
+      console.debug('Received game event:', gameEvent);
+
       setServerTime(gameEvent.timestamp);
 
       switch (gameEvent.type) {

@@ -38,6 +38,7 @@ message RankedUser {
   string profile_picture = 3;
   int32 score = 4;
   int32 ranking = 5;
+  int32 previous_ranking = 6;
 }
 
 // Represent the leaderboard data

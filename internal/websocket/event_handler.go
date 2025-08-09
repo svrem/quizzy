@@ -210,6 +210,7 @@ func (h *Hub) handleGameShowAnswerEvent() {
 	db.UpdateManyUsers(updatedUsers)
 }
 
+var previousRankedUsers = make(map[string]*int32)
 var rankedUsers []*protocol.RankedUser
 var topUsersLeaderboardEventStr []byte
 
@@ -229,6 +230,12 @@ func (h *Hub) handleShowLeaderboardEvent() {
 			Score:          int32(user.Score),
 			Ranking:        int32(user.Ranking),
 		}
+
+		if previousRankedUsers[user.ID] != nil {
+			rankedUsers[i].PreviousRanking = *previousRankedUsers[user.ID]
+		}
+
+		previousRankedUsers[user.ID] = &rankedUsers[i].Ranking
 	}
 
 	topUsersLeaderboardEvent := &protocol.GameEvent{

@@ -37,15 +37,15 @@ export default function Leaderboard({ rankedUsers }: LeaderboardProps) {
             key={index}
             className={cn(
               'leaderboard-display flex h-20 animate-fade-in items-center gap-3 rounded-lg bg-black/30 px-3 py-3 opacity-0',
-              user?.id === rankedUser.id && 'border-secondary-accent border-4',
+              user?.id === rankedUser.id && 'border-4 border-secondary-accent',
               rankedUser.ranking === 1
-                ? 'from-first-winner-background-from to-first-winner-background-to border-0 bg-gradient-to-r'
+                ? 'border-0 bg-gradient-to-r from-first-winner-background-from to-first-winner-background-to'
                 : '',
               rankedUser.ranking === 2
-                ? 'from-second-winner-background-from to-second-winner-background-to border-0 bg-gradient-to-r'
+                ? 'border-0 bg-gradient-to-r from-second-winner-background-from to-second-winner-background-to'
                 : '',
               rankedUser.ranking === 3
-                ? 'from-third-winner-background-from to-third-winner-background-to border-0 bg-gradient-to-r'
+                ? 'border-0 bg-gradient-to-r from-third-winner-background-from to-third-winner-background-to'
                 : '',
             )}
             ref={user?.id === rankedUser.id ? setUserRef : null}
@@ -53,6 +53,14 @@ export default function Leaderboard({ rankedUsers }: LeaderboardProps) {
               animationDelay: `${index * 0.1}s`,
             }}
           >
+            <div className='flex flex-col items-center gap-2'>
+              <p className='text-lg font-semibold'>#{rankedUser.ranking}</p>
+              {(rankedUser.previousRanking !== undefined ||
+                rankedUser.ranking === rankedUser.previousRanking) && (
+                <p className='text-sm text-gray-500'>-</p>
+              )}
+            </div>
+
             <div className='relative aspect-square h-full rounded-full'>
               <img
                 src={rankedUser.profilePicture || ''}
@@ -76,8 +84,6 @@ export default function Leaderboard({ rankedUsers }: LeaderboardProps) {
                 {rankedUser.score?.toLocaleString()} points
               </p>
             </div>
-
-            <p className='text-lg font-semibold'>#{rankedUser.ranking}</p>
           </div>
         ))}
       </div>

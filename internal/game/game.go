@@ -43,6 +43,8 @@ func (g *Game) Start() {
 		g.LeaderboardDeadline = time.Now().Add(LeaderboardDuration * time.Second).UnixMilli()
 		time.Sleep(LeaderboardDuration * time.Second)
 
+		continue
+
 		g.selectCategory()
 
 		questions, err := getQuestions(g.SelectedCategory, AmountOfQuestionsPerCategory)
