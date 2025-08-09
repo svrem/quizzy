@@ -1,0 +1,130 @@
+@import 'tailwindcss';
+
+@source './**/*.{js,jsx,ts,tsx}';
+
+@theme {
+  --color-theme-accent-color: hsla(var(--theme-accent-color));
+  --color-first-winner-background-from: hsla(
+    var(--first-winner-background-from)
+  );
+  --color-first-winner-background-to: hsla(var(--first-winner-background-to));
+  --color-second-winner-background-from: hsla(
+    var(--second-winner-background-from)
+  );
+  --color-second-winner-background-to: hsla(var(--second-winner-background-to));
+  --color-third-winner-background-from: hsla(
+    var(--third-winner-background-from)
+  );
+  --color-third-winner-background-to: hsla(var(--third-winner-background-to));
+  --color-base-text-color: var(--base-text-color);
+  --color-answer-button-inactive: var(--answer-button-inactive);
+  --color-answer-button-active: var(--answer-button-active);
+  --color-answer-button-hover: var(--answer-button-hover);
+  --color-secondary-accent: hsla(var(--secondary-accent));
+  --color-secondary-background-color: var(--secondary-background-color);
+
+  --animate-fade-in-slide: fadeInSlide 0.5s ease-out forwards;
+  --animate-fade-in: fadeIn 0.5s ease-out forwards;
+
+  @keyframes fadeInSlide {
+    0% {
+      opacity: 0;
+      transform: translateY(-30%);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  padding: 2rem;
+  height: 100dvh;
+  margin: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  background-color: hsl(255.6, 64%, 15%);
+  color: var(--base-text-color);
+}
+
+@media (width < 600px) {
+  body {
+    padding: 0.5rem;
+  }
+}
+
+code {
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+:root {
+  --theme-accent-color: 45, 100%, 50%;
+  --base-text-color: hsl(60, 30%, 96.08%);
+
+  --first-winner-background-from: 50.6, 100%, 50%;
+  --first-winner-background-to: 50.6, 100%, 40%;
+  --second-winner-background-from: 0, 0%, 50%;
+  --second-winner-background-to: 0, 0%, 40%;
+  --third-winner-background-from: 29.8, 60.8%, 50%;
+  --third-winner-background-to: 29.8, 60.8%, 40%;
+
+  --answer-button-inactive: hsl(249.78, 61.33%, 29.41%);
+  --answer-button-inactive-shadow: hsl(249.78, 61.33%, 19.41%);
+  --answer-button-hover: hsl(249.78, 61.33%, 39.41%);
+  --answer-button-hover-shadow: hsl(249.78, 61.33%, 29.41%);
+  --answer-button-active: hsl(218.59, 87.67%, 55.49%);
+  --answer-button-active-shadow: hsl(218.59, 87.67%, 45.49%);
+
+  --answer-correct: hsl(140, 70%, 45%);
+  --answer-correct-percentage: hsl(140, 70%, 55%);
+  --answer-correct-shadow: hsl(140, 70%, 35%);
+  --answer-incorrect: hsl(345, 75%, 40%);
+  --answer-incorrect-percentage: hsl(345, 75%, 50%);
+  --answer-incorrect-shadow: hsl(345, 75%, 30%);
+
+  --secondary-accent: 255.6, 64%, 40%;
+  --secondary-background-color: hsl(255.6, 64%, 20%);
+}

@@ -41,12 +41,12 @@ export default function CategorySelector({
     >
       <h2 className='m-3 text-center text-xl'>Choose a new category!</h2>
       {imagesLoaded < 3 && (
-        <div className='flex flex-grow items-center justify-center'>
+        <div className='flex grow items-center justify-center'>
           <PulseLoader />
         </div>
       )}
       {imagesLoaded >= 3 && (
-        <div className='grid w-full flex-grow grid-cols-3 gap-2 md:gap-5'>
+        <div className='grid w-full grow grid-cols-3 gap-2 md:gap-5'>
           {possibleCategories.map((category, i) => (
             <CategoryButton
               category={category}

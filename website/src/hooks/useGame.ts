@@ -11,8 +11,8 @@ import { quizzy as protobuf } from '@/protocol/quizzy.pb';
 export function useGame() {
   const { authenticatedState, user } = useAuth();
 
-  const winSound = useAudio(`${process.env.PUBLIC_URL}/audio/win.mp3`);
-  const loseSound = useAudio(`${process.env.PUBLIC_URL}/audio/lose.mp3`);
+  const winSound = useAudio(`/audio/win.mp3`);
+  const loseSound = useAudio(`/audio/lose.mp3`);
 
   const gameSocket = useGameSocket();
 

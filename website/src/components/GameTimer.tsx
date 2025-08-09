@@ -42,7 +42,7 @@ export default function GameTimer({
 
   return (
     <CircularProgressbar
-      className='col-start-3 h-12 !w-12 justify-self-end font-bold md:h-24 md:!w-24'
+      className='col-start-3 h-12 w-12! justify-self-end font-bold md:h-24 md:w-24!'
       value={timerCountdown ?? duration}
       text={
         timerCountdown
@@ -53,8 +53,8 @@ export default function GameTimer({
       backgroundPadding={6}
       styles={buildStyles({
         trailColor: 'hsla(0, 0%, 0%, 0.4)',
-        textColor: 'var(--base-text-color)',
-        pathColor: 'hsl(var(--theme-accent-color))',
+        textColor: 'var(--color-base-text-color)',
+        pathColor: 'var(--color-theme-accent-color)',
         strokeLinecap: 'round',
         pathTransitionDuration: 0.3,
         pathTransition: 'ease 0.3s',

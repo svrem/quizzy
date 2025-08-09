@@ -11,7 +11,7 @@
 
 .answer-button {
   --answer-button-shadow-offset: var(--answer-button-base-shadow-offset);
-  --answer-button-shadow-color: var(--answer-button-inactive-shadow);
+  --answer-button-shadow-color: var(--color-answer-button-inactive-shadow);
 
   box-shadow: 0 var(--answer-button-shadow-offset) 0px 0px
     var(--answer-button-shadow-color);
@@ -25,40 +25,40 @@
 }
 
 .answer-button:hover {
-  background-color: var(--answer-button-hover);
-  --answer-button-shadow-color: var(--answer-button-hover-shadow);
+  background-color: var(--color-answer-button-hover);
+  --answer-button-shadow-color: var(--color-answer-button-hover-shadow);
 }
 
 .answer-button.selected {
   --answer-button-shadow-offset: calc(var(--answer-button-base-shadow-offset));
-  --answer-button-shadow-color: var(--answer-button-active-shadow);
-  background-color: var(--answer-button-active);
+  --answer-button-shadow-color: var(--color-answer-button-active-shadow);
+  background-color: var(--color-answer-button-active);
 }
 
 .answer-button.correct {
   transform: translateY(0);
-  background-color: var(--answer-correct);
+  background-color: var(--color-answer-correct);
 
   --answer-button-shadow-offset: calc(var(--answer-button-base-shadow-offset));
-  --answer-button-shadow-color: var(--answer-correct-shadow);
+  --answer-button-shadow-color: var(--color-answer-correct-shadow);
 
   & > .progress {
-    background-color: var(--answer-correct-percentage);
+    background-color: var(--color-answer-correct-percentage);
   }
 
   --shine-opacity: 0.5;
 }
 .answer-button.incorrect {
   transform: translateY(0);
-  background-color: var(--answer-incorrect);
+  background-color: var(--color-answer-incorrect);
 
   --answer-button-shadow-offset: calc(var(--answer-button-base-shadow-offset));
-  --answer-button-shadow-color: var(--answer-incorrect-shadow);
+  --answer-button-shadow-color: var(--color-answer-incorrect-shadow);
 
   color: rgba(255, 255, 255, 0.8);
 
   & > .progress {
-    background-color: var(--answer-incorrect-percentage);
+    background-color: var(--color-answer-incorrect-percentage);
   }
 }
 
@@ -128,7 +128,7 @@
 }
 
 .secondary-display {
-  background-color: var(--secondary-background-color);
+  background-color: var(--color-secondary-background-color);
   box-shadow:
     0 5px 0 0 hsl(255.6, 64%, 13%),
     inset 0px 1px 0 0px rgba(255, 255, 255, 0.1);

@@ -64,7 +64,7 @@ export default function Overlay({
     >
       <div
         className={cn(
-          'login-popup relative flex w-[95%] max-w-[50rem] flex-col items-center gap-5 rounded-xl bg-answer-button-inactive p-3 transition-all md:p-5',
+          'login-popup relative flex w-[95%] max-w-200 flex-col items-center gap-5 rounded-xl bg-answer-button-inactive p-3 transition-all md:p-5',
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-0 opacity-0',
         )}
       >

@@ -38,16 +38,17 @@ export default function Leaderboard({ rankedUsers }: LeaderboardProps) {
           <div
             key={index}
             className={cn(
-              'leaderboard-display flex h-20 animate-fade-in items-center gap-3 rounded-lg bg-black/30 px-3 py-3 opacity-0',
-              user?.id === rankedUser.id && 'border-4 border-secondary-accent',
+              'leaderboard-display animate-fade-in flex h-20 items-center gap-3 rounded-lg bg-black/30 px-3 py-3 opacity-0',
+              user?.id === rankedUser.id &&
+                'border-secondary-accent border-4 px-2 py-2',
               rankedUser.ranking === 1
-                ? 'border-0 bg-gradient-to-r from-first-winner-background-from to-first-winner-background-to'
+                ? 'from-first-winner-background-from to-first-winner-background-to border-0 bg-linear-to-r'
                 : '',
               rankedUser.ranking === 2
-                ? 'border-0 bg-gradient-to-r from-second-winner-background-from to-second-winner-background-to'
+                ? 'from-second-winner-background-from to-second-winner-background-to border-0 bg-linear-to-r'
                 : '',
               rankedUser.ranking === 3
-                ? 'border-0 bg-gradient-to-r from-third-winner-background-from to-third-winner-background-to'
+                ? 'from-third-winner-background-from to-third-winner-background-to border-0 bg-linear-to-r'
                 : '',
             )}
             ref={user?.id === rankedUser.id ? setUserRef : null}
@@ -88,16 +89,16 @@ export default function Leaderboard({ rankedUsers }: LeaderboardProps) {
             <div className='relative aspect-square h-full rounded-full'>
               <img
                 src={rankedUser.profilePicture || ''}
-                className='h-full rounded-full'
+                className='h-12 w-12 rounded-full'
               />
               <div className='absolute top-0 -z-10 h-full w-full animate-pulse rounded-full bg-slate-800' />
             </div>
 
-            <div className='flex-grow'>
+            <div className='grow'>
               <p className='text-lg font-semibold'>{rankedUser.username}</p>
               <p
                 className={cn(
-                  'text-sm text-theme-accent-color',
+                  'text-theme-accent-color text-sm',
                   rankedUser.ranking === 1 ||
                     rankedUser.ranking === 2 ||
                     rankedUser.ranking === 3

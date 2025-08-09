@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useChallenge } from '@/hooks/useChallenge';
 
-const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL || '/ws';
+// const WEBSOCKET_URL = process.env.REACT_APP_WEBSOCKET_URL || '/ws';
+const WEBSOCKET_URL = '/ws';
 const MAX_RECONNECT_ATTEMPTS = 5;
 const RECONNECT_DELAY = 1000; // 1 second
 

@@ -14,7 +14,7 @@ export default function QuestionDisplay({
   return (
     <div className='flex flex-col items-center justify-center'>
       <p
-        className='animate-fade-in select-none text-center text-xl font-bold opacity-0 md:text-3xl'
+        className='animate-fade-in text-center text-xl font-bold opacity-0 select-none md:text-3xl'
         dangerouslySetInnerHTML={{ __html: question || '' }}
       ></p>
 
@@ -27,7 +27,7 @@ export default function QuestionDisplay({
           style={{ animationDelay: '0.4s' }}
         ></p>
         <div
-          className='h-4 w-px animate-fade-in bg-gray-500 opacity-0 md:h-5'
+          className='animate-fade-in h-4 w-px bg-gray-500 opacity-0 md:h-5'
           style={{ animationDelay: '0.8s' }}
         />
         <p
