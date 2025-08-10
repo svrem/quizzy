@@ -10,6 +10,10 @@ func migrateDB() error {
 		return err
 	}
 
+	if err := db.AutoMigrate(&UserOAuth{}); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -20,8 +24,7 @@ type User struct {
 	Username       string `gorm:"not null"`
 	ProfilePicture string
 
-	Provider   string `gorm:"uniqueIndex:idx_provider_provider_id;not null"`
-	ProviderID string `gorm:"uniqueIndex:idx_provider_provider_id;not null"`
+	OAuthProviders []UserOAuth `gorm:"foreignKey:UserID"`
 
 	Streak    int `gorm:"-:all"`
 	MaxStreak int `gorm:"default:0"`
@@ -31,4 +34,11 @@ type User struct {
 func (user *User) BeforeCreate(txt *gorm.DB) error {
 	user.ID = uuid.NewString()
 	return nil
+}
+
+type UserOAuth struct {
+	ID         uint   `gorm:"primaryKey"`
+	UserID     string `gorm:"index;not null"`
+	Provider   string `gorm:"not null;uniqueIndex:provider_providerid_idx"`
+	ProviderID string `gorm:"not null;uniqueIndex:provider_providerid_idx"`
 }

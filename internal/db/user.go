@@ -8,12 +8,20 @@ type RankedUser struct {
 	Ranking        int    `json:"ranking"`
 }
 
-func GetUserByProviderAndID(provider, providerID string) *User {
+func GetUserByEmail(email string) *User {
 	var user User
-	if err := db.Where("provider = ? AND provider_id = ?", provider, providerID).First(&user).Error; err != nil {
+	if err := db.Where("email = ?", email).First(&user).Error; err != nil {
 		return nil
 	}
 	return &user
+}
+
+func GetUserByProviderAndID(provider, providerID string) *User {
+	var userOAuth UserOAuth
+	if err := db.Where("provider = ? AND provider_id = ?", provider, providerID).First(&userOAuth).Error; err != nil {
+		return nil
+	}
+	return GetUserByID(userOAuth.UserID)
 }
 
 func GetUserByID(id string) *User {
@@ -26,6 +34,10 @@ func GetUserByID(id string) *User {
 
 func CreateUser(user *User) error {
 	return db.Create(user).Error
+}
+
+func CreateUserOAuth(userOAuth *UserOAuth) error {
+	return db.Create(userOAuth).Error
 }
 
 func UpdateManyUsers(users []*User) error {

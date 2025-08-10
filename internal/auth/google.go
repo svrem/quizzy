@@ -58,6 +58,11 @@ func fetchGoogleUserInfo(googleOauth2Conf *oauth2.Config, token *oauth2.Token) (
 	if userInfo.ID == "" {
 		return nil, errors.New("failed to get user info from Google")
 	}
+
+	if !userInfo.VerifiedEmail {
+		return nil, errors.New("email not verified")
+	}
+
 	return &userInfo, nil
 }
 
@@ -112,9 +117,7 @@ func HandleGoogleOAuthCallback(res http.ResponseWriter, req *http.Request) {
 		Email:          userInfo.Email,
 		Username:       userInfo.GivenName,
 		ProfilePicture: userInfo.Picture,
-		Provider:       "google",
-		ProviderID:     userInfo.ID,
-	})
+	}, "google", userInfo.ID)
 
 	if err != nil {
 		http.Error(res, "Failed to generate user token: "+err.Error(), http.StatusInternalServerError)

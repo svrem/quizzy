@@ -59,7 +59,7 @@ function GamePage() {
           <GameTimer
             timerEndTime={timerEndTime}
             duration={duration}
-            timeOffset={timeOffset}
+            timeOffset={timeOffset || 0}
           />
         </div>
 

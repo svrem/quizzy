@@ -1,12 +1,11 @@
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import { useEffect, useState } from 'react';
 import 'react-circular-progressbar/dist/styles.css';
-import { useTimeSync } from '@/hooks/useTimeSync';
 
 type GameTimerProps = {
   timerEndTime: number | null;
   duration: number;
-  timeOffset: number | null;
+  timeOffset: number;
 };
 
 export default function GameTimer({
@@ -17,7 +16,7 @@ export default function GameTimer({
   const [timerCountdown, setTimerCountdown] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!timerEndTime || !timeOffset) return;
+    if (!timerEndTime) return;
 
     setTimerCountdown(
       Math.floor((timerEndTime - new Date().getTime() - timeOffset) / 1000),

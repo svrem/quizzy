@@ -63,25 +63,29 @@ func welcomeUser(client *Client, currentGame *game.Game) {
 	currentTime := time.Now().UnixMilli()
 
 	if len(currentGame.SelectedCategories) != 0 {
-		questionMessage := currentGame.GenerateCategorySelectionMessage()
-		questionMessageStr, err := proto.Marshal(questionMessage)
+		categoryVoteMessage := currentGame.GenerateCategorySelectionMessage()
+		categoryVoteMessage.Timestamp = time.Now().UnixMilli()
+
+		categoryVoteMessageStr, err := proto.Marshal(categoryVoteMessage)
 		if err != nil {
 			println("Error marshalling category selection message:", err)
 			return
 		}
-		sendMessageToClient(client, questionMessageStr)
+		sendMessageToClient(client, categoryVoteMessageStr)
 
 		if currentTime < currentGame.CategorySelectionDeadline {
 			return
 		}
 
-		questionMessage = currentGame.GenerateCategoryVotesMessage()
-		questionMessageStr, err = proto.Marshal(questionMessage)
+		categoryVoteMessage = currentGame.GenerateCategoryVotesMessage()
+		categoryVoteMessage.Timestamp = time.Now().UnixMilli()
+
+		categoryVoteMessageStr, err = proto.Marshal(categoryVoteMessage)
 		if err != nil {
 			println("Error marshalling category votes message:", err)
 			return
 		}
-		sendMessageToClient(client, questionMessageStr)
+		sendMessageToClient(client, categoryVoteMessageStr)
 
 		return
 	}
@@ -96,6 +100,8 @@ func welcomeUser(client *Client, currentGame *game.Game) {
 	}
 
 	questionMessage := currentGame.GenerateQuestionMessage()
+	questionMessage.Timestamp = time.Now().UnixMilli()
+
 	questionMessageStr, err := proto.Marshal(questionMessage)
 	if err != nil {
 		println("Error marshalling question message:", err)
@@ -108,6 +114,8 @@ func welcomeUser(client *Client, currentGame *game.Game) {
 	}
 
 	answerPhaseMessage := currentGame.GenerateAnswerPhaseMessage()
+	answerPhaseMessage.Timestamp = time.Now().UnixMilli()
+
 	answerPhaseMessageStr, err := proto.Marshal(answerPhaseMessage)
 	if err != nil {
 		println("Error marshalling answer phase message:", err)
@@ -120,6 +128,8 @@ func welcomeUser(client *Client, currentGame *game.Game) {
 	}
 
 	showAnswerMessage := currentGame.GenerateShowAnswerMessage()
+	showAnswerMessage.Timestamp = time.Now().UnixMilli()
+
 	showAnswerMessageStr, err := proto.Marshal(showAnswerMessage)
 	if err != nil {
 		println("Error marshalling show answer message:", err)

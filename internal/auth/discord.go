@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -104,9 +105,7 @@ func HandleDiscordOAuthCallback(res http.ResponseWriter, req *http.Request) {
 		Email:          userInfo.Email,
 		Username:       userInfo.Username,
 		ProfilePicture: userInfo.Avatar,
-		Provider:       "discord",
-		ProviderID:     userInfo.ID,
-	})
+	}, "discord", userInfo.ID)
 
 	if err != nil {
 		http.Error(res, "Failed to generate user token: "+err.Error(), http.StatusInternalServerError)
@@ -149,6 +148,10 @@ func fetchDiscordUserInfo(accessToken string) (*DiscordUserInfo, error) {
 	var userInfo DiscordUserInfo
 	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
 		return nil, fmt.Errorf("failed to decode user info response: %w", err)
+	}
+
+	if !userInfo.Verified {
+		return nil, errors.New("email not verified")
 	}
 
 	// Construct the avatar URL

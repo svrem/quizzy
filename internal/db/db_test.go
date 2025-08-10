@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"math/rand"
 	"net/http"
-	"strconv"
 	"testing"
 	"time"
 )
@@ -82,8 +81,6 @@ func TestUsers(t *testing.T) {
 			user := User{
 				Email:          result.Email,
 				Username:       result.Login.Username,
-				Provider:       "google",
-				ProviderID:     "google-id-" + strconv.Itoa(i),
 				ProfilePicture: result.Picture.Thumbnail,
 				Streak:         0,
 				Score:          rand.Intn(10000),

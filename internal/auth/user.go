@@ -37,15 +37,31 @@ func generateBearerToken(user *db.User) (string, error) {
 
 }
 
-func generateUserToken(user db.User) (string, error) {
-	existingUser := db.GetUserByProviderAndID(user.Provider, user.ProviderID)
+func generateUserToken(user db.User, provider string, providerID string) (string, error) {
+	existingUser := db.GetUserByProviderAndID(provider, providerID)
 
 	if existingUser != nil {
 		log.Println("User already exists, generating token for existing user")
 		return generateBearerToken(existingUser)
 	}
 
-	if err := db.CreateUser(&user); err != nil {
+	emailUser := db.GetUserByEmail(user.Email)
+
+	if emailUser != nil {
+		user = *emailUser
+	} else {
+		if err := db.CreateUser(&user); err != nil {
+			return "", err
+		}
+	}
+
+	userOAuth := db.UserOAuth{
+		UserID:     user.ID,
+		Provider:   provider,
+		ProviderID: providerID,
+	}
+
+	if err := db.CreateUserOAuth(&userOAuth); err != nil {
 		return "", err
 	}
 
