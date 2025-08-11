@@ -36,6 +36,10 @@
     background-color: hsl(255.6, 64%, 15%);
     color: var(--color-base-text-color);
   }
+
+  img {
+    user-select: none;
+  }
 }
 
 @theme {

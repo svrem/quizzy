@@ -23,16 +23,15 @@ func (h *Hub) handleUserMessage(message Message) {
 	case protocol.UserEventType_HELLO:
 		welcomeUser(message.Client, h.currentGame)
 	case protocol.UserEventType_SELECT_ANSWER:
-		h.handleUserSelectAnswer(message.Client, &userEvent)
+		h.handleUserSelectAnswer(message.Client, userEvent.GetSelectAnswer().AnswerIndex)
 	case protocol.UserEventType_SELECT_CATEGORY:
-		h.handleUserSelectCategory(message.Client, &userEvent)
+		h.handleUserSelectCategory(message.Client, userEvent.GetSelectCategory().CategoryIndex)
 	default:
 		println("Unknown message type:", userEvent.Type)
 	}
 }
 
 func (h *Hub) handleGameEvent(event *protocol.GameEvent) {
-	// inject the current server time into the event
 	event.Timestamp = time.Now().UnixMilli()
 
 	eventStr, err := proto.Marshal(event)
@@ -148,9 +147,7 @@ func sendMessageToClient(client *Client, message []byte) {
 	}
 }
 
-func (h *Hub) handleUserSelectAnswer(client *Client, event *protocol.UserEvent) {
-	answerIndex := event.GetSelectAnswer().AnswerIndex
-
+func (h *Hub) handleUserSelectAnswer(client *Client, answerIndex int32) {
 	if client.selectedAnswer != -1 {
 		h.currentGame.QuestionVotes[client.selectedAnswer]--
 	}
@@ -159,9 +156,7 @@ func (h *Hub) handleUserSelectAnswer(client *Client, event *protocol.UserEvent) 
 	h.currentGame.QuestionVotes[answerIndex]++
 }
 
-func (h *Hub) handleUserSelectCategory(client *Client, event *protocol.UserEvent) {
-	categoryIndex := event.GetSelectCategory().CategoryIndex
-
+func (h *Hub) handleUserSelectCategory(client *Client, categoryIndex int32) {
 	if client.selectedCategory != -1 {
 		h.currentGame.CategoryVotes[client.selectedCategory]--
 	}

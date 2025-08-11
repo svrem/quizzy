@@ -49,7 +49,12 @@ message QuestionData {
   string question = 1;
   string difficulty = 2;
   string category = 3;
-  int64 end_time = 4;
+
+  string streakTemplateMessage = 4;
+  string streakUsername = 5;
+  string streakProfilePicture = 6;
+  string streakUserID = 7;
+
 }
 
 // Represents the answer phase (users selecting answers)

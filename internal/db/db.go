@@ -7,8 +7,10 @@ import (
 
 var db *gorm.DB
 
-func InitializeDatabase() error {
-	return InitializeDatabaseWithPath("data/test.db")
+func init() {
+	if err := InitializeDatabaseWithPath("data/test.db"); err != nil {
+		panic(err)
+	}
 }
 
 func InitializeDatabaseWithPath(dbPath string) error {

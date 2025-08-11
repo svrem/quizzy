@@ -90,15 +90,11 @@ export function useGame() {
     gameSocket.onmessage = async (event: MessageEvent) => {
       const buffer = new Uint8Array(event.data);
       const gameEvent = protobuf.GameEvent.decode(buffer);
-
       setServerTime(gameEvent.timestamp);
-
       switch (gameEvent.type) {
         case protobuf.GameEventType.QUESTION: {
           const question = gameEvent.question;
-
           if (!question) throw new Error('Question data is missing');
-
           setQuestion(question.question || null);
           setDifficulty(question.difficulty || null);
           setCategory(question.category || null);
@@ -114,7 +110,6 @@ export function useGame() {
         }
         case protobuf.GameEventType.START_ANSWER_PHASE: {
           setAnswers(gameEvent.answerPhase?.answers || []);
-
           setTimer(
             gameEvent.answerPhase?.answerShownAt || null,
             gameEvent.answerPhase?.duration || 0,
@@ -141,7 +136,6 @@ export function useGame() {
             gameEvent.categorySelection?.endTime || null,
             gameEvent.categorySelection?.duration || 0,
           );
-
           break;
         }
         case protobuf.GameEventType.CATEGORY_VOTES: {
@@ -151,29 +145,22 @@ export function useGame() {
         case protobuf.GameEventType.SHOW_ANSWER: {
           setCorrectAnswerIndex(gameEvent.showAnswer?.correct || 0);
           setAnswerPercentages(gameEvent.showAnswer?.percentages || null);
-
           if (selectedAnswerIndex === null) {
             setSelectedAnswerIndex(null);
             break;
           }
-
           if (selectedAnswerIndex !== gameEvent.showAnswer?.correct) {
             loseSound.play();
             setSelectedAnswerIndex(null);
             break;
           }
-
           setSelectedAnswerIndex(null);
           winSound.play();
-
           const source = selectedOptionRef.current?.getBoundingClientRect();
-
           if (!source) break;
-
           await fireConfetti({
             y: source.top / window.innerHeight,
           });
-
           break;
         }
         case protobuf.GameEventType.SHOW_LEADERBOARD: {
@@ -188,9 +175,7 @@ export function useGame() {
           setVotePercentages(null);
           setSelectedCategory(null);
           resetTimer();
-
           setRankedUsers(gameEvent.showLeaderboard?.users || []);
-
           break;
         }
       }
@@ -201,9 +186,9 @@ export function useGame() {
   //   setQuestion('skibidi toilet?');
   //   setDifficulty('easy');
   //   setCategory('Music');
-  //   setAnswers(['Yes', 'No', 'Sigma', 'Among us']);
-  //   setAnswerPercentages([30, 70]);
-  //   setCorrectAnswerIndex(0);
+  //   // setAnswers(['Yes', 'No', 'Sigma', 'Among us']);
+  //   // setAnswerPercentages([30, 70]);
+  //   // setCorrectAnswerIndex(0);
   //   // setCategoryPossibilities(['Music', 'Science', 'History']);
   // }, []);
 

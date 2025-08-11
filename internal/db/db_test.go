@@ -81,6 +81,7 @@ func TestUsers(t *testing.T) {
 			user := User{
 				Email:          result.Email,
 				Username:       result.Login.Username,
+				Bot:            true,
 				ProfilePicture: result.Picture.Thumbnail,
 				Streak:         0,
 				Score:          rand.Intn(10000),

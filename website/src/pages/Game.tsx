@@ -39,12 +39,14 @@ function GamePage() {
   const [profileOverlayOpen, setProfileOverlayOpen] = useState(false);
 
   const fullPageContent =
-    categoryPossibilities !== null || rankedUsers.length > 0;
+    categoryPossibilities !== null ||
+    rankedUsers.length > 0 ||
+    answers.length === 0;
 
   return (
     <>
       <div
-        className='relative right-0 left-0 mx-auto grid h-full w-full max-w-280 max-w-[100vh]'
+        className='relative right-0 left-0 mx-auto grid h-full w-full max-w-[100vh]'
         style={{
           gridTemplateRows: 'repeat(17, minmax(0, 1fr))',
         }}
@@ -87,6 +89,35 @@ function GamePage() {
 
         {rankedUsers.length > 0 && <Leaderboard rankedUsers={rankedUsers} />}
 
+        {answers.length === 0 && question && (
+          <div
+            className='relative top-0 left-0 grid place-items-center'
+            style={{
+              gridRow: 'span 13 / span 13',
+            }}
+          >
+            <QuestionDisplay
+              category={category}
+              difficulty={difficulty}
+              question={question}
+            />
+
+            {/* <div className='animate-fade-in secondary-display absolute bottom-0 flex w-full items-center justify-center gap-2 rounded-xl px-[5%] py-3 text-[2dvh] font-bold opacity-0'>
+              <img
+                className='h-[4dvh] rounded-full'
+                src='https://lh3.googleusercontent.com/a/ACg8ocJXHrC2raMaIyM28MQWAhHskjE3SWtOsNv1y5w3wSNkRppfZQ=s96-c'
+                alt=''
+              />
+              <p className='text-center'>
+                <button className='text-theme-accent-color hover:text-theme-accent-color/80 underline transition-colors'>
+                  FuzzyGlider
+                </button>{' '}
+                has the highest Answer Streak of 6!
+              </p>
+            </div> */}
+          </div>
+        )}
+
         <div
           className={cn(
             'answer-grid grid w-full',
@@ -114,16 +145,6 @@ function GamePage() {
             openProfileOverlay={() => setProfileOverlayOpen(true)}
           />
         </div>
-
-        {answers.length === 0 && !fullPageContent && (
-          <div className='pointer-events-none absolute top-0 left-0 grid h-full w-full place-items-center'>
-            <QuestionDisplay
-              category={category}
-              difficulty={difficulty}
-              question={question}
-            />
-          </div>
-        )}
       </div>
 
       <LoginOverlay

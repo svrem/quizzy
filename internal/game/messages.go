@@ -7,7 +7,6 @@ import (
 func (g *Game) GenerateQuestionMessage() *protocol.GameEvent {
 	question := &protocol.QuestionData{
 		Question:   g.CurrentQuestion.Question,
-		EndTime:    g.QuestionPreviewDeadline,
 		Difficulty: g.CurrentQuestion.Difficulty,
 		Category:   g.CurrentQuestion.Category,
 	}

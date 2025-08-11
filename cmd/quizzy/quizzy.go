@@ -6,7 +6,6 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"github.com/svrem/quizzy/internal/db"
 	"github.com/svrem/quizzy/internal/game"
 	"github.com/svrem/quizzy/internal/middleware"
 	"github.com/svrem/quizzy/internal/routes"
@@ -19,11 +18,6 @@ func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Println("Warning: No .env file found, using default environment variables")
-	}
-
-	if err := db.InitializeDatabase(); err != nil {
-		log.Fatal("Failed to initialize database: ", err)
-		return
 	}
 
 	router := routes.NewRouter()

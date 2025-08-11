@@ -20,6 +20,7 @@ func migrateDB() error {
 type User struct {
 	gorm.Model
 	ID             string `gorm:"unique;primaryKey;type:uuid;"`
+	Bot            bool   `gorm:"default:false"`
 	Email          string `gorm:"not null"`
 	Username       string `gorm:"not null"`
 	ProfilePicture string
