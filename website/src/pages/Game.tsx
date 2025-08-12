@@ -6,6 +6,7 @@ import GameTimer from '@/components/GameTimer';
 import Leaderboard from '@/components/Leaderboard';
 import LoginOverlay from '@/components/LoginOverlay';
 import ProfileOverlay from '@/components/ProfileOverlay';
+import PulseLoader from '@/components/PulseLoader';
 import QuestionDisplay from '@/components/QuestionDisplay';
 import UserStatsDisplay from '@/components/UserStatsDisplay';
 import { useGame } from '@/hooks/useGame';
@@ -23,6 +24,7 @@ function GamePage() {
     selectedCategory,
     timeOffset,
     selectedOptionRef,
+    gameSocketLoading,
     answerPercentages,
     categoryPossibilities,
     timerEndTime,
@@ -41,7 +43,8 @@ function GamePage() {
   const fullPageContent =
     categoryPossibilities !== null ||
     rankedUsers.length > 0 ||
-    answers.length === 0;
+    answers.length === 0 ||
+    gameSocketLoading;
 
   return (
     <>
@@ -75,6 +78,17 @@ function GamePage() {
               difficulty={difficulty}
               question={question}
             />
+          </div>
+        )}
+
+        {gameSocketLoading && (
+          <div
+            className='relative top-0 left-0 grid place-items-center'
+            style={{
+              gridRow: 'span 13 / span 13',
+            }}
+          >
+            <PulseLoader />
           </div>
         )}
 

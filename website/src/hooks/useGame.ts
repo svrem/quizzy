@@ -15,6 +15,7 @@ export function useGame() {
   const loseSound = useAudio(`/audio/lose.mp3`);
 
   const gameSocket = useGameSocket();
+  const [gameSocketLoading, setGameSocketLoading] = useState(true);
 
   const { setServerTime, timeOffset } = useTimeSync();
 
@@ -90,7 +91,13 @@ export function useGame() {
     gameSocket.onmessage = async (event: MessageEvent) => {
       const buffer = new Uint8Array(event.data);
       const gameEvent = protobuf.GameEvent.decode(buffer);
+
       setServerTime(gameEvent.timestamp);
+
+      if (gameSocketLoading) {
+        setGameSocketLoading(false);
+      }
+
       switch (gameEvent.type) {
         case protobuf.GameEventType.QUESTION: {
           const question = gameEvent.question;
@@ -207,6 +214,7 @@ export function useGame() {
     streak,
     categoryPossibilities,
     answerPercentages,
+    gameSocketLoading,
     rankedUsers,
     selectedCategory,
     votePercentages,
