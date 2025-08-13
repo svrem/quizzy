@@ -61,6 +61,11 @@ func (h *Hub) handleGameEvent(event *protocol.GameEvent) {
 func welcomeUser(client *Client, currentGame *game.Game) {
 	currentTime := time.Now().UnixMilli()
 
+	if currentTime < currentGame.LeaderboardDeadline {
+		sendLeaderboardEventToClient(client)
+		return
+	}
+
 	if len(currentGame.SelectedCategories) != 0 {
 		categoryVoteMessage := currentGame.GenerateCategorySelectionMessage()
 		categoryVoteMessage.Timestamp = time.Now().UnixMilli()
@@ -86,11 +91,6 @@ func welcomeUser(client *Client, currentGame *game.Game) {
 		}
 		sendMessageToClient(client, categoryVoteMessageStr)
 
-		return
-	}
-
-	if currentTime < currentGame.LeaderboardDeadline {
-		sendLeaderboardEventToClient(client)
 		return
 	}
 
