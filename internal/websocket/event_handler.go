@@ -63,33 +63,18 @@ func welcomeUser(client *Client, currentGame *game.Game) {
 
 	if currentTime < currentGame.LeaderboardDeadline {
 		sendLeaderboardEventToClient(client)
-		return
 	}
 
 	if len(currentGame.SelectedCategories) != 0 {
 		categoryVoteMessage := currentGame.GenerateCategorySelectionMessage()
-		categoryVoteMessage.Timestamp = time.Now().UnixMilli()
-
-		categoryVoteMessageStr, err := proto.Marshal(categoryVoteMessage)
-		if err != nil {
-			println("Error marshalling category selection message:", err)
-			return
-		}
-		sendMessageToClient(client, categoryVoteMessageStr)
+		client.sendGameEvent(categoryVoteMessage)
 
 		if currentTime < currentGame.CategorySelectionDeadline {
 			return
 		}
 
 		categoryVoteMessage = currentGame.GenerateCategoryVotesMessage()
-		categoryVoteMessage.Timestamp = time.Now().UnixMilli()
-
-		categoryVoteMessageStr, err = proto.Marshal(categoryVoteMessage)
-		if err != nil {
-			println("Error marshalling category votes message:", err)
-			return
-		}
-		sendMessageToClient(client, categoryVoteMessageStr)
+		client.sendGameEvent(categoryVoteMessage)
 
 		return
 	}
@@ -99,43 +84,21 @@ func welcomeUser(client *Client, currentGame *game.Game) {
 	}
 
 	questionMessage := currentGame.GenerateQuestionMessage()
-	questionMessage.Timestamp = time.Now().UnixMilli()
-
-	questionMessageStr, err := proto.Marshal(questionMessage)
-	if err != nil {
-		println("Error marshalling question message:", err)
-		return
-	}
-	sendMessageToClient(client, questionMessageStr)
+	client.sendGameEvent(questionMessage)
 
 	if currentTime < currentGame.QuestionPreviewDeadline {
 		return
 	}
 
 	answerPhaseMessage := currentGame.GenerateAnswerPhaseMessage()
-	answerPhaseMessage.Timestamp = time.Now().UnixMilli()
-
-	answerPhaseMessageStr, err := proto.Marshal(answerPhaseMessage)
-	if err != nil {
-		println("Error marshalling answer phase message:", err)
-		return
-	}
-	sendMessageToClient(client, answerPhaseMessageStr)
+	client.sendGameEvent(answerPhaseMessage)
 
 	if currentTime < currentGame.QuestionSubmissionDeadline {
 		return
 	}
 
 	showAnswerMessage := currentGame.GenerateShowAnswerMessage()
-	showAnswerMessage.Timestamp = time.Now().UnixMilli()
-
-	showAnswerMessageStr, err := proto.Marshal(showAnswerMessage)
-	if err != nil {
-		println("Error marshalling show answer message:", err)
-		return
-	}
-	sendMessageToClient(client, showAnswerMessageStr)
-
+	client.sendGameEvent(showAnswerMessage)
 }
 
 func sendMessageToClient(client *Client, message []byte) {
@@ -198,13 +161,7 @@ func (h *Hub) handleGameShowAnswerEvent() {
 		}
 
 		msg := game.GenerateUpdateUserStatsMessage(client.user.Streak, client.user.Score)
-		msgStr, err := proto.Marshal(msg)
-		if err != nil {
-			println("Error marshalling user stats message:", err)
-			continue
-		}
-
-		sendMessageToClient(client, msgStr)
+		client.sendGameEvent(msg)
 
 		if client.user.ID != "" {
 			updatedUsers = append(updatedUsers, client.user)
@@ -292,11 +249,6 @@ func sendLeaderboardEventToClient(client *Client) {
 			},
 		},
 	}
-	surroundingLeaderboardEventStr, err := proto.Marshal(surroundingLeaderboardEvent)
-	if err != nil {
-		println("Error marshalling surrounding leaderboard event:", err)
-		return
-	}
 
-	sendMessageToClient(client, surroundingLeaderboardEventStr)
+	client.sendGameEvent(surroundingLeaderboardEvent)
 }

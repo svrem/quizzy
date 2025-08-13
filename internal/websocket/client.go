@@ -12,6 +12,8 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/svrem/quizzy/internal/db"
+	"github.com/svrem/quizzy/internal/protocol"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -130,5 +132,22 @@ func (c *Client) writePump() {
 				return
 			}
 		}
+	}
+}
+
+func (c *Client) sendGameEvent(event *protocol.GameEvent) {
+	event.Timestamp = time.Now().UnixMilli()
+
+	eventStr, err := proto.Marshal(event)
+	if err != nil {
+		println("Error marshalling game event:", err)
+		return
+	}
+
+	select {
+	case c.send <- eventStr:
+	default:
+		close(c.send)
+		delete(c.hub.clients, c)
 	}
 }

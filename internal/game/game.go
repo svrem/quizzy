@@ -46,13 +46,7 @@ func (g *Game) Start() {
 
 		g.selectCategory()
 
-		questions, err := getQuestions(g.SelectedCategory, AmountOfQuestionsPerCategory)
-		if err != nil {
-			println("Error fetching questions:", err.Error())
-			return
-		}
-
-		g.playQuestions(questions)
+		g.playQuestions()
 
 	}
 }
@@ -68,9 +62,9 @@ func (g *Game) selectCategory() {
 	g.SelectedCategories = selectedCategories
 	g.CategoryVotes = [3]int{0, 0, 0}
 
-	g.CategorySelectionDeadline = time.Now().Add(CategorySelectionDuration * time.Second).UnixMilli()
 	g.Broadcaster.broadcast <- g.GenerateCategorySelectionMessage()
 
+	g.CategorySelectionDeadline = time.Now().Add(CategorySelectionDuration * time.Second).UnixMilli()
 	time.Sleep(CategorySelectionDuration * time.Second)
 
 	// get the max category vote and set the selected category
@@ -131,7 +125,14 @@ func (g *Game) generateVoteDistribution() {
 	copy(g.QuestionVotes[:], distributions)
 }
 
-func (g *Game) playQuestions(questions []Question) {
+func (g *Game) playQuestions() {
+
+	questions, err := getQuestions(g.SelectedCategory, AmountOfQuestionsPerCategory)
+	if err != nil {
+		println("Error fetching questions:", err.Error())
+		return
+	}
+
 	questionIndex := 0
 
 	for _, question := range questions {
