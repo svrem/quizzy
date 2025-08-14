@@ -65,6 +65,12 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         maxStreak: parseInt(data.max_streak, 10),
         startingScore: parseInt(data.score, 10),
       });
+
+      await window.umami?.identify(data.id, {
+        email: data.email,
+        username: data.username,
+      });
+
       setAuthenticatedState('authenticated');
     } catch (error) {
       setAuthenticatedState('unauthenticated');
