@@ -14,11 +14,11 @@ export default function QuestionDisplay({
   return (
     <div className='flex flex-col items-center justify-center'>
       <p
-        className='animate-fade-in text-center text-xl font-bold opacity-0 select-none md:text-3xl'
+        className='animate-fade-in text-center text-[3.5dvh] font-bold opacity-0 select-none'
         dangerouslySetInnerHTML={{ __html: question || '' }}
       ></p>
 
-      <div className='flex items-center justify-center gap-2 text-sm font-semibold text-gray-400 md:gap-3 md:text-lg'>
+      <div className='flex items-center justify-center gap-2 text-[2dvh] font-semibold text-gray-400 md:gap-3'>
         <p
           dangerouslySetInnerHTML={{
             __html: category || '',

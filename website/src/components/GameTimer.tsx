@@ -41,7 +41,7 @@ export default function GameTimer({
 
   return (
     <CircularProgressbar
-      className='col-start-3 h-12 w-12! justify-self-end font-bold md:h-24 md:w-24!'
+      className='col-start-3 h-[8dvh] w-[8dvh]! justify-self-end font-bold'
       value={timerCountdown ?? duration}
       text={
         timerCountdown

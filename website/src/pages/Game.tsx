@@ -57,7 +57,7 @@ function GamePage() {
         <div
           className={cn('row-span-2 grid grid-cols-3 items-center py-5 md:p-0')}
         >
-          <h1 className='h-fit text-2xl font-bold md:col-start-2 md:text-center md:text-5xl'>
+          <h1 className='h-fit text-[4dvh] font-bold md:col-start-2 md:text-center'>
             Quizzy
           </h1>
 
