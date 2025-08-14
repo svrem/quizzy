@@ -129,6 +129,8 @@ export function useGame() {
           break;
         }
         case protobuf.GameEventType.CATEGORY_SELECTION: {
+          window.umami?.track(`category-selection`);
+
           setQuestion(null);
           setDifficulty(null);
           setCategory(null);
@@ -150,6 +152,10 @@ export function useGame() {
           break;
         }
         case protobuf.GameEventType.SHOW_ANSWER: {
+          if (selectedAnswerIndex !== null) {
+            window.umami?.track(`submitted-answer`);
+          }
+
           setCorrectAnswerIndex(gameEvent.showAnswer?.correct || 0);
           setAnswerPercentages(gameEvent.showAnswer?.percentages || null);
           if (selectedAnswerIndex === null) {
@@ -171,6 +177,8 @@ export function useGame() {
           break;
         }
         case protobuf.GameEventType.SHOW_LEADERBOARD: {
+          window.umami?.track(`show-leaderboard`);
+
           setQuestion(null);
           setDifficulty(null);
           setCategory(null);

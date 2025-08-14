@@ -31,7 +31,7 @@ export default function LoginOverlay({
           ? "Don't have an account yet?"
           : 'Already have an account?'}
         <button
-          className='ml-1 text-base-text-color'
+          className='text-base-text-color ml-1'
           onClick={() => setPageOpen(pageOpen === 'login' ? 'signup' : 'login')}
         >
           {pageOpen === 'login' ? 'Sign Up' : 'Login'}
@@ -55,7 +55,8 @@ function OAuthButton({ iconComponent: Icon, provider }: OAuthButtonProps) {
   return (
     <a
       href={`/auth/login/${provider}`}
-      className='secondary-display flex w-full select-none items-center justify-center gap-3 rounded-lg py-4 text-center text-sm font-bold capitalize md:py-5 md:text-xl'
+      data-umami-event={`login-${provider}`}
+      className='secondary-display flex w-full items-center justify-center gap-3 rounded-lg py-4 text-center text-sm font-bold capitalize select-none md:py-5 md:text-xl'
     >
       <Icon className='inline-block h-6 w-6' />
       {provider}

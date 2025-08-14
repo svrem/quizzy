@@ -24,7 +24,7 @@ function AnswerButton({
   return (
     <button
       className={cn(
-        'btn btn-primary answer-button relative select-none overflow-hidden rounded-2xl bg-answer-button-inactive px-20 text-[2dvh] font-bold transition-all md:rounded-3xl',
+        'btn btn-primary answer-button bg-answer-button-inactive relative overflow-hidden rounded-2xl px-20 text-[2dvh] font-bold transition-all select-none md:rounded-3xl',
         selectedAnswerIndex === index ? 'selected' : '',
         correctAnswerIndex !== null &&
           (correctAnswerIndex === index ? 'correct' : 'incorrect'),
@@ -35,18 +35,18 @@ function AnswerButton({
       ref={selectedAnswerIndex === index ? selectedOptionRef : null}
     >
       <div
-        className='progress absolute left-0 top-0 h-full w-[50%] transition-all duration-500'
+        className='progress absolute top-0 left-0 h-full w-[50%] transition-all duration-500'
         style={{
           width: percentage ? `${percentage}%` : '0%',
         }}
       />
-      <div className='shine absolute left-0 top-0 h-full w-full rounded-2xl transition-all md:rounded-3xl' />
+      <div className='shine absolute top-0 left-0 h-full w-full rounded-2xl transition-all md:rounded-3xl' />
 
       <p
         dangerouslySetInnerHTML={{
           __html: ALPHABET[index] + ') ' + answer,
         }}
-        className='absolute bottom-0 left-0 right-0 top-0 m-auto h-fit w-fit font-bold'
+        className='absolute top-0 right-0 bottom-0 left-0 m-auto h-fit w-fit font-bold'
       ></p>
     </button>
   );
