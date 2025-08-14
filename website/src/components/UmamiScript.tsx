@@ -19,16 +19,26 @@ export default function UmamiScript() {
     loadUmamiConfiguration();
   }, []);
 
-  if (loading) return null;
+  useEffect(() => {
+    if (loading) return;
 
-  if (!umamiUrl || !umamiWebsiteId) {
-    console.warn(
-      'Umami analytics script not loaded: missing environment variables.',
-    );
-    return null;
-  }
+    if (!umamiUrl || !umamiWebsiteId) {
+      console.warn(
+        'Umami analytics script not loaded: missing environment variables.',
+      );
+      return;
+    }
 
-  return (
-    <script async src={umamiUrl} data-website-id={umamiWebsiteId}></script>
-  );
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = umamiUrl;
+    script.setAttribute('data-website-id', umamiWebsiteId);
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, [umamiUrl, umamiWebsiteId]);
+
+  return null;
 }
