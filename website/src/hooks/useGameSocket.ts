@@ -10,10 +10,13 @@ export function useGameSocket() {
   const { challengeToken, nonce } = useChallenge();
 
   const [socket, setSocket] = useState<WebSocket | null>(null);
+  const [gameSocketLoading, setGameSocketLoading] = useState(true);
   const reconnectAttempts = useRef(0);
 
   useEffect(() => {
     const connect = () => {
+      setGameSocketLoading(true);
+
       const websocketUrl = new URL(WEBSOCKET_URL, window.location.origin);
       websocketUrl.searchParams.set('challenge_token', challengeToken || '');
       websocketUrl.searchParams.set('nonce', nonce?.toString() || '');
@@ -47,5 +50,9 @@ export function useGameSocket() {
     };
   }, [socket, challengeToken, nonce]);
 
-  return socket;
+  return {
+    gameSocket: socket,
+    gameSocketLoading,
+    setGameSocketLoading,
+  };
 }

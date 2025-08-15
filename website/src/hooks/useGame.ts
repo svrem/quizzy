@@ -14,8 +14,8 @@ export function useGame() {
   const winSound = useAudio(`/audio/win.mp3`);
   const loseSound = useAudio(`/audio/lose.mp3`);
 
-  const gameSocket = useGameSocket();
-  const [gameSocketLoading, setGameSocketLoading] = useState(true);
+  const { gameSocket, gameSocketLoading, setGameSocketLoading } =
+    useGameSocket();
 
   const { setServerTime, timeOffset } = useTimeSync();
 

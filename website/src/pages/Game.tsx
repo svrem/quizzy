@@ -68,7 +68,7 @@ function GamePage() {
           />
         </div>
 
-        {!fullPageContent && (
+        {!gameSocketLoading && !fullPageContent && (
           <div
             style={{ opacity: answers.length > 0 ? 1 : 0 }}
             className='row-span-5 flex grow flex-col items-center justify-center'
@@ -92,7 +92,7 @@ function GamePage() {
           </div>
         )}
 
-        {categoryPossibilities && (
+        {!gameSocketLoading && categoryPossibilities && (
           <CategorySelector
             possibleCategories={categoryPossibilities}
             setSelectedCategory={setSelectedCategory}
@@ -101,9 +101,11 @@ function GamePage() {
           />
         )}
 
-        {rankedUsers.length > 0 && <Leaderboard rankedUsers={rankedUsers} />}
+        {!gameSocketLoading && rankedUsers.length > 0 && (
+          <Leaderboard rankedUsers={rankedUsers} />
+        )}
 
-        {answers.length === 0 && question && (
+        {!gameSocketLoading && answers.length === 0 && question && (
           <div
             className='relative top-0 left-0 grid place-items-center'
             style={{
@@ -140,7 +142,7 @@ function GamePage() {
               : 'row-span-10 grid-rows-5',
           )}
         >
-          {!fullPageContent && (
+          {!gameSocketLoading && !fullPageContent && (
             <AnswersDisplay
               answers={answers}
               correctAnswerIndex={correctAnswerIndex}
